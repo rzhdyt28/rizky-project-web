@@ -30,8 +30,12 @@ export default defineConfig({
     port: 5173,
     // Saat dev, request /api & /sanctum diteruskan ke Laravel lokal
     proxy: {
-      "/api": { target: "http://127.0.0.1:8000", changeOrigin: true },
-      "/sanctum": { target: "http://127.0.0.1:8000", changeOrigin: true },
+      "/api": { target: "http://rizky-project.io", changeOrigin: true },
+      "/sanctum": { target: "http://rizky-project.io", changeOrigin: true },
+      "/storage": { target: "http://rizky-project.io", changeOrigin: true },
+      // "/api": { target: "http://127.0.0.1:8000", changeOrigin: true },
+      // "/sanctum": { target: "http://127.0.0.1:8000", changeOrigin: true },
+      // "/storage": { target: "http://127.0.0.1:8000", changeOrigin: true },
     },
   },
 });

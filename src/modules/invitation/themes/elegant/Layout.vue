@@ -38,14 +38,14 @@ const SECTION_MAP = computed(() => ({
     props: { invitation: props.invitation, bg: props.sectionBg("couple") },
     show: props.can.couple,
   },
-  countdown: {
-    comp: CountdownSection,
-    props: {
-      event: props.invitation.events?.[0],
-      bg: props.sectionBg("countdown"),
-    },
-    show: props.can.countdown,
-  },
+  // countdown: {
+  //   comp: CountdownSection,
+  //   props: {
+  //     event: props.invitation.events?.[0],
+  //     bg: props.sectionBg("countdown"),
+  //   },
+  //   show: props.can.countdown,
+  // },
   events: {
     comp: EventSection,
     props: {
@@ -133,7 +133,7 @@ const orderedSections = computed(() =>
 
 <template>
   <!-- class="relative min-h-screen font-light" -->
-  <!-- <div class="mx-auto max-w-xl"> -->
+  <!-- <div class="max-w-xl mx-auto"> -->
   <div
     class="relative min-h-screen font-light"
     :style="{
@@ -147,6 +147,7 @@ const orderedSections = computed(() =>
     <CoverSection
       v-if="!opened"
       :invitation="invitation"
+      :countdown-event="can.countdown ? invitation.events?.[0] : null"
       :guest-name="guestName"
       :labels="labels"
       :cover="cover"
