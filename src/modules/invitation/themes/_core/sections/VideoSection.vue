@@ -5,12 +5,11 @@ import { toEmbedUrl } from '../../../composables/useThemeOptions';
 defineProps({
   videoUrl: { type: String, default: null },
   labels:   { type: Object, required: true },
-  bg:       { type: Object, default: null },
 });
 </script>
 
 <template>
-  <SectionWrapper v-if="videoUrl" :title="labels.title_video" :bg="bg">
+  <SectionWrapper v-if="videoUrl" :title="labels.title_video">
     <div class="mx-auto aspect-video max-w-md overflow-hidden border"
       :style="{ borderColor: 'color-mix(in srgb, var(--t-accent) 20%, transparent)' }"
     >

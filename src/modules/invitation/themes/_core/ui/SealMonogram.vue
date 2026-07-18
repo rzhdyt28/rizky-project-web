@@ -7,15 +7,17 @@ const props = defineProps({
   small: { type: Boolean, default: false },
 });
 
-const monogram = computed(() => `${props.groom?.[0] ?? ''}·${props.bride?.[0] ?? ''}`);
+const initials = computed(() =>
+  `${(props.groom[0] ?? '').toUpperCase()}·${(props.bride[0] ?? '').toUpperCase()}`
+);
 </script>
 
 <template>
-  <div
-    class="grid place-items-center rounded-full"
-    :class="small ? 'h-11 w-11 text-sm' : 'h-20 w-20 text-2xl'"
+  <span
+    class="c-monogram grid place-items-center rounded-full"
+    :class="small ? 'h-12 w-12 text-sm' : 'h-20 w-20 text-xl'"
     :style="{ background: 'var(--t-accent)', color: 'var(--t-paper)', fontFamily: 'var(--t-font-head)' }"
   >
-    {{ monogram }}
-  </div>
+    {{ initials }}
+  </span>
 </template>

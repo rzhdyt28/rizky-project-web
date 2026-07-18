@@ -6,7 +6,6 @@ import { assetUrl } from '../../../composables/assets';
 const props = defineProps({
   photos: { type: Array, default: () => [] },
   labels: { type: Object, required: true },
-  bg:     { type: Object, default: null },
 });
 
 /* Carousel + pagination: 1 slide berisi maksimal 4 foto (grid 2x2). */
@@ -61,7 +60,7 @@ onBeforeUnmount(() => { document.body.style.overflow = ''; });
 </script>
 
 <template>
-  <SectionWrapper v-if="photos?.length" :title="labels.title_gallery" :bg="bg">
+  <SectionWrapper v-if="photos?.length" :title="labels.title_gallery">
     <div class="relative max-w-md mx-auto overflow-hidden">
       <div
         class="flex transition-transform duration-500"

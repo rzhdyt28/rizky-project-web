@@ -9,7 +9,6 @@ const props = defineProps({
   guestName: { type: String, default: '' },
   guestbook: { type: Array, default: () => [] },
   labels:    { type: Object, required: true },
-  bg:        { type: Object, default: null },
 });
 
 const gb = useGuestbook(props.slug);
@@ -28,17 +27,17 @@ async function submit() {
 </script>
 
 <template>
-  <SectionWrapper :title="labels.title_guestbook" :bg="bg">
+  <SectionWrapper :title="labels.title_guestbook">
     <div class="mx-auto max-w-sm">
-      <form class="grid gap-2.5 border bg-white/60 p-5"
+      <form class="c-panel grid gap-2.5 border bg-white/60 p-5"
         :style="{ borderColor: 'color-mix(in srgb, var(--t-accent) 20%, transparent)' }"
         @submit.prevent="submit"
       >
         <p v-if="error" class="text-xs text-red-700">{{ error }}</p>
         <input v-model="form.guest_name" required maxlength="120" placeholder="Nama"
-          class="border px-3 py-2.5 text-sm" :style="{ background: 'var(--t-paper)' }" />
+          class="c-input border px-3 py-2.5 text-sm" :style="{ background: 'var(--t-paper)' }" />
         <textarea v-model="form.message" required maxlength="1000" rows="3" placeholder="Tulis ucapan &amp; doa"
-          class="resize-none border px-3 py-2.5 text-sm" :style="{ background: 'var(--t-paper)' }" />
+          class="c-input resize-none border px-3 py-2.5 text-sm" :style="{ background: 'var(--t-paper)' }" />
         <TheButton :disabled="gb.isPending?.value">Kirim Ucapan</TheButton>
       </form>
 

@@ -1,0 +1,218 @@
+/* ============================================================
+   TEMA MILDNESS — SEMUA gaya khas tema ini hidup DI FILE INI.
+   Scope: .theme-mildness — mustahil bocor ke tema lain.
+   Menata komponen _core lewat CLASS HOOK (c-*), bukan :deep() hack.
+   ============================================================ */
+
+.theme-mildness {
+  /* backdrop biru lembut di belakang kartu */
+  background: linear-gradient(180deg, #dce7f0, #eef3f8 30%, #eef3f8 70%, #dce7f0);
+
+  /* kartu mengambang (dipakai FloatingCard global) */
+  --card-bg: var(--t-paper);
+  --card-radius: 1.75rem;
+  --card-shadow: 0 20px 45px -20px rgba(63, 91, 124, 0.35);
+
+  /* ukuran floral pojok (dipakai FloralCorner global) */
+  --floral-size: 7rem;
+  --floral-size-sm: 9rem;
+  --floral-size-md: 13rem;
+  --floral-size-lg: 15rem;
+}
+
+/* Judul section pakai kaligrafi navy (mis. "Rangkaian Acara", "Galeri") */
+.theme-mildness .c-section__title {
+  font-family: var(--t-font-script);
+  color: var(--t-accent);
+  font-size: 2.4rem;
+  line-height: 1.1;
+}
+.theme-mildness .c-section__rule { opacity: 0.4; }
+
+/* Konten menyatu ke permukaan kartu: matikan "kotak dalam kotak"
+   bawaan _core (EventSection, RSVP, Guestbook, Gift). */
+.theme-mildness .c-panel {
+  background: transparent;
+  border-color: transparent;
+}
+
+/* Countdown gaya 1/5 — CIRCLE (default): lingkaran navy, angka putih.
+   Ter-scope ke varian supaya 4 gaya lain tidak terganggu. */
+.theme-mildness .c-countdown__timer--circle .c-countdown__box {
+  background: var(--t-accent);
+  border-radius: 9999px;
+  width: clamp(46px, 13vw, 58px);
+  height: clamp(46px, 13vw, 58px);
+  min-width: 0;
+  padding: 0;
+}
+.theme-mildness .c-countdown__timer--circle .c-countdown__num   { color: #fff; font-size: 1.05rem; }
+.theme-mildness .c-countdown__timer--circle .c-countdown__label { color: rgba(255, 255, 255, 0.85); font-size: 8px; }
+
+/* Input form lebih lembut */
+.theme-mildness .c-input { border-radius: 0.6rem; }
+
+/* Tombol bulat */
+.theme-mildness .c-btn { border-radius: 9999px; }
+
+/* ============================================================
+   v3 — SECTION FULL LAYAR + PERBAIKAN MOBILE + LAPIS BACKGROUND
+   ============================================================ */
+
+/* Tiap section satu layar penuh; konten di tengah. 100svh menghindari
+   lompatan address-bar di browser HP (fallback 100vh untuk browser lama).
+   Konten lebih tinggi dari layar? Tumbuh wajar (min-height, bukan height). */
+.theme-mildness .m-screen {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1rem;
+  background-size: cover;
+  background-position: center;
+}
+.theme-mildness .m-screen--short {
+  min-height: 0;
+  padding-top: 1rem;
+}
+
+/* Mode tanpa kartu + background foto per-section: beri selubung putih
+   supaya teks tetap terbaca di atas foto. */
+.theme-mildness .m-screen--bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+/* PERBAIKAN MOBILE: bingkai konten selalu selebar layar dikurangi padding,
+   kartu mengikuti 100% bingkai — tidak lagi meluber/menyempit sendiri. */
+.theme-mildness .m-frame {
+  position: relative;
+  width: 100%;
+  max-width: 26rem;
+  margin-inline: auto;
+}
+@media (min-width: 640px) {
+  .theme-mildness .m-frame { max-width: 28rem; }
+}
+.theme-mildness .m-frame .g-card { width: 100%; }
+.theme-mildness .m-full { width: 100%; }
+
+
+/* Lapis background halaman (di belakang semua konten). */
+.theme-mildness .m-bg-photo {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+.theme-mildness .m-bg-veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(237, 243, 248, 0.8), rgba(237, 243, 248, 0.88));
+}
+.theme-mildness .m-bg-ornament {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.4;
+}
+
+/* ============================================================
+   v4 — COUNTDOWN 5 GAYA + TINGGI SECTION AUTO + FOTO BG MOBILE
+   ============================================================ */
+
+/* Gaya 2/5 — BOXED: kotak membulat berbingkai halus. */
+.theme-mildness .c-countdown__timer--boxed .c-countdown__box {
+  background: color-mix(in srgb, var(--t-paper) 78%, transparent);
+  border: 1px solid color-mix(in srgb, var(--t-accent) 30%, transparent);
+  border-radius: 0.8rem;
+  min-width: 62px;
+  padding: 0.6rem 0.5rem;
+  box-shadow: 0 8px 18px -12px color-mix(in srgb, var(--t-accent) 45%, transparent);
+}
+.theme-mildness .c-countdown__timer--boxed .c-countdown__num { font-size: 1.6rem; }
+
+/* Gaya 3/5 — MINIMAL: angka besar dengan pemisah titik dua, tanpa kotak. */
+.theme-mildness .c-countdown__timer--minimal { gap: 0.5rem; }
+.theme-mildness .c-countdown__timer--minimal .c-countdown__box {
+  background: transparent;
+  padding: 0.2rem 0.4rem;
+  position: relative;
+}
+.theme-mildness .c-countdown__timer--minimal .c-countdown__num { font-size: 2rem; }
+.theme-mildness .c-countdown__timer--minimal .c-countdown__box:not(:last-child)::after {
+  content: ':';
+  position: absolute;
+  right: -0.5rem;
+  top: 0.3rem;
+  color: var(--t-gold);
+  font-family: var(--t-font-head);
+  font-size: 1.4rem;
+}
+
+/* Gaya 4/5 — PILL: satu pil memanjang berisi empat nilai bersekat garis. */
+.theme-mildness .c-countdown__timer--pill {
+  gap: 0;
+  width: max-content;
+  max-width: 100%;
+  margin-inline: auto;
+  background: var(--t-accent);
+  border-radius: 9999px;
+  padding: 0.45rem 0.6rem;
+}
+.theme-mildness .c-countdown__timer--pill .c-countdown__box {
+  background: transparent;
+  border-radius: 0;
+  min-width: 54px;
+  padding: 0.2rem 0.55rem;
+}
+.theme-mildness .c-countdown__timer--pill .c-countdown__box:not(:last-child) {
+  border-right: 1px solid rgba(255, 255, 255, 0.25);
+}
+.theme-mildness .c-countdown__timer--pill .c-countdown__num   { color: #fff; font-size: 1.25rem; }
+.theme-mildness .c-countdown__timer--pill .c-countdown__label { color: rgba(255, 255, 255, 0.8); font-size: 8px; }
+
+/* Gaya 5/5 — FLIP: kartu dua-nada ala flip-clock dengan garis tengah. */
+.theme-mildness .c-countdown__timer--flip .c-countdown__box {
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    var(--t-paper) 0 50%,
+    color-mix(in srgb, var(--t-paper) 82%, var(--t-accent)) 50% 100%
+  );
+  border-radius: 0.55rem;
+  min-width: 60px;
+  padding: 0.55rem 0.5rem;
+  box-shadow:
+    0 10px 20px -14px color-mix(in srgb, var(--t-accent) 55%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--t-accent) 18%, transparent);
+}
+.theme-mildness .c-countdown__timer--flip .c-countdown__box::after {
+  content: '';
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: 50%;
+  height: 1px;
+  background: color-mix(in srgb, var(--t-accent) 22%, transparent);
+}
+.theme-mildness .c-countdown__timer--flip .c-countdown__num { font-size: 1.55rem; }
+
+/* Tinggi section 'auto' — solusi gap saat konten pendek. */
+.theme-mildness .m-screen--auto {
+  min-height: 0;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+/* Foto background versi mobile (potret 9:16): tampil hanya di layar sempit;
+   foto desktop disembunyikan bila versi mobile tersedia. */
+.theme-mildness .m-bg-photo--mobile { display: none; }
+@media (max-width: 767px) {
+  .theme-mildness .m-bg-photo--mobile { display: block; }
+  .theme-mildness .m-bg-photo--desktop.m-bg-photo--swap { display: none; }
+}

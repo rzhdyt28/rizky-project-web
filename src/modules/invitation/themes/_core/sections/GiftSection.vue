@@ -6,7 +6,6 @@ import { assetUrl } from '../../../composables/assets';
 defineProps({
   gifts:  { type: Array, default: () => [] },
   labels: { type: Object, required: true },
-  bg:     { type: Object, default: null },
 });
 
 const copied = ref(null);
@@ -20,11 +19,11 @@ async function copy(text, id) {
 </script>
 
 <template>
-  <SectionWrapper v-if="gifts?.length" :title="labels.title_gift" :bg="bg">
+  <SectionWrapper v-if="gifts?.length" :title="labels.title_gift">
     <div class="mx-auto grid max-w-sm gap-3">
       <div
         v-for="g in gifts" :key="g.id"
-        class="border border-dashed bg-white/50 p-4 text-sm"
+        class="c-panel border border-dashed bg-white/50 p-4 text-sm"
         :style="{ borderColor: 'var(--t-gold)' }"
       >
         <template v-if="g.type === 'address'">

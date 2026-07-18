@@ -1,14 +1,23 @@
 # Membuat Tema Baru
 
-1. `cp -r _template nama-temamu` (atau copy folder elegant untuk mulai dari layout penuh)
-2. Edit `Layout.vue` — atur nuansa: warna default, spacing, radius, animasi.
-   Semua section diimpor dari `../shared/sections/` — JANGAN tulis ulang RSVP/galeri.
-3. Ingin section tampil beda hanya di tema ini? Buat file di folder tema
-   (mis. `nama-temamu/CustomGallery.vue`) lalu pakai itu di SECTION_MAP
-   menggantikan versi shared.
-4. Daftarkan di `../registry.js`:
-   `namaTemamu: defineAsyncComponent(() => import('./nama-temamu/Layout.vue'))`
-5. Di Filament: Themes -> Create -> component_key = nama folder, tier, default_options.
+Satu tema = satu folder di `themes/`. Tidak menyentuh folder lain.
 
-Props kontrak (SAMA semua tema): invitation, guestName, guestbook, slug,
-can, labels, sectionOrder, sectionBg, globalBg, cover.
+## Langkah
+1. Copy folder `_template/` → rename jadi `themes/<component_key>/` (huruf kecil).
+2. `Layout.vue`  : ganti class `theme-namatema` → `theme-<component_key>`.
+3. `theme.css`   : ganti scope `.theme-namatema`, tulis semua gaya khas di sini.
+4. `tokens.js`   : isi palet & font default tema.
+5. `registry.js` : tambah 1 baris (layout + tokens).
+6. Filament → Themes → Create → `component_key` sama persis.
+
+## Membedakan satu section saja
+Buat `sections/NamaSection.vue` di folder tema, lalu di Layout:
+`<SectionRenderer :ctx="ctx" :overrides="{ countdown: MyCountdown }" ...>`
+Kontrak props tiap section ada di `components/SectionRenderer.vue` (propsFor).
+
+## Checklist sebelum rilis tema
+- [ ] Uji lebar 360px (WhatsApp in-app browser) SEBELUM desktop.
+- [ ] Uji dengan & tanpa foto sampul, dengan & tanpa ornamen.
+- [ ] Uji nama pasangan panjang (>15 huruf) — tidak boleh terpotong.
+- [ ] Semua warna lewat CSS var `--t-*`, bukan hex hardcode.
+- [ ] Tidak ada `:deep()` ke komponen _core — pakai class hook `c-*`.

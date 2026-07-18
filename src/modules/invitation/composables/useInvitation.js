@@ -3,10 +3,12 @@ import { api } from '../../../shared/api/client';
 
 const base = '/api/invitation';
 
-export function usePublicInvitation(slug, guest) {
+export function usePublicInvitation(slug, guest, preview = false) {
   return useQuery({
-    queryKey: ['invitation', slug],
-    queryFn: async () => (await api.get(`${base}/p/${slug}`, { params: { to: guest } })).data,
+    queryKey: ['invitation', slug, preview],
+    queryFn: async () => (await api.get(`${base}/p/${slug}`, {
+      params: { to: guest, ...(preview ? { preview: 1 } : {}) },
+    })).data,
   });
 }
 

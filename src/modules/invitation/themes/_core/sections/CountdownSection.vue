@@ -4,7 +4,6 @@ import SectionWrapper from '../ui/SectionWrapper.vue';
 
 const props = defineProps({
   event: { type: Object, default: null },
-  bg:    { type: Object, default: null },
 });
 
 const now = ref(Date.now());
@@ -26,20 +25,20 @@ const parts = computed(() => {
 </script>
 
 <template>
-  <SectionWrapper v-if="event" :bg="bg">
-    <p class="mb-3 text-[10px] uppercase tracking-[0.35em]" :style="{ color: 'var(--t-gold)' }">
+  <SectionWrapper v-if="event">
+    <p class="c-countdown__eyebrow mb-3 text-[10px] uppercase tracking-[0.35em]" :style="{ color: 'var(--t-gold)' }">
       Menuju hari bahagia
     </p>
-    <div class="flex justify-center gap-3">
+    <div class="c-countdown flex justify-center gap-3">
       <div
         v-for="p in parts" :key="p.lbl"
-        class="min-w-[60px] px-3 py-2"
+        class="c-countdown__box min-w-[60px] px-3 py-2"
         :style="{ background: 'color-mix(in srgb, var(--t-accent) 8%, transparent)' }"
       >
-        <div class="text-2xl" :style="{ fontFamily: 'var(--t-font-head)', color: 'var(--t-accent)' }">
+        <div class="c-countdown__num text-2xl" :style="{ fontFamily: 'var(--t-font-head)', color: 'var(--t-accent)' }">
           {{ String(p.num).padStart(2, '0') }}
         </div>
-        <div class="text-[9px] uppercase tracking-widest opacity-70">{{ p.lbl }}</div>
+        <div class="c-countdown__label text-[9px] uppercase tracking-widest opacity-70">{{ p.lbl }}</div>
       </div>
     </div>
   </SectionWrapper>

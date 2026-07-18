@@ -1,0 +1,12 @@
+/* Ganti "namatema" dengan component_key tema barumu, lalu tulis SEMUA
+   gaya khas tema di sini. Class hook _core yang bisa ditata:
+   .c-section  .c-section__title  .c-section__rule
+   .c-panel (kotak dalam Event/RSVP/Guestbook/Gift)
+   .c-countdown__box  .c-countdown__num  .c-countdown__label
+   .c-btn  .c-input  .c-cover  .c-cover__names  .c-monogram  .c-divider
+   Variabel kartu/floral (untuk FloatingCard & FloralCorner global):
+   --card-bg  --card-radius  --card-shadow
+   --floral-size  --floral-size-sm  --floral-size-md  --floral-size-lg */
+.theme-namatema {
+  background: var(--t-paper);
+}

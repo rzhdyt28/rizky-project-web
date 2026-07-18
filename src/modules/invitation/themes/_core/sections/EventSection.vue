@@ -6,8 +6,7 @@ import { toMapsEmbed } from '../../../composables/useThemeOptions';
 defineProps({
   events:   { type: Array, default: () => [] },
   labels:   { type: Object, required: true },
-  showMaps: { type: Boolean, default: false },   // fitur paket Premium+
-  bg:       { type: Object, default: null },
+  showMaps: { type: Boolean, default: false },
 });
 
 const dateLong = (d) => new Date(d).toLocaleDateString('id-ID',
@@ -17,11 +16,11 @@ const timeShort = (d) => new Date(d).toLocaleTimeString('id-ID',
 </script>
 
 <template>
-  <SectionWrapper :title="labels.title_events" :bg="bg">
+  <SectionWrapper :title="labels.title_events">
     <div class="grid gap-4">
       <article
         v-for="ev in events" :key="ev.id"
-        class="border bg-white/60 p-5"
+        class="c-panel border bg-white/60 p-5"
         :style="{ borderColor: 'color-mix(in srgb, var(--t-accent) 25%, transparent)' }"
       >
         <h4 class="text-xl" :style="{ fontFamily: 'var(--t-font-head)', color: 'var(--t-accent)' }">

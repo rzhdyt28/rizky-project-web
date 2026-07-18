@@ -4,12 +4,11 @@ import OrnamentDivider from '../ui/OrnamentDivider.vue';
 
 defineProps({
   invitation: { type: Object, required: true },
-  bg:         { type: Object, default: null },
 });
 </script>
 
 <template>
-  <footer class="relative grid justify-items-center gap-2.5 px-4 py-10 text-center">
+  <footer class="c-footer relative grid justify-items-center gap-2.5 px-4 py-10 text-center">
     <OrnamentDivider />
     <SealMonogram small :groom="invitation.groom_name" :bride="invitation.bride_name" />
     <p class="text-base" :style="{ fontFamily: 'var(--t-font-head)' }">
