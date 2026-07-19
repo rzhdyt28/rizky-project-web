@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { api, csrf } from '../api/client';
 
 export const useAuthStore = defineStore('auth', {
-  state: () => ({ user: null, tenant: null, roles: [], loaded: false }),
+  state: () => ({ user: null, tenant: null, roles: [], subscription: null, loaded: false }),
 
   getters: {
     isLoggedIn: (s) => !!s.user,
@@ -14,6 +14,7 @@ export const useAuthStore = defineStore('auth', {
       try {
         const { data } = await api.get('/api/auth/me');
         this.user = data.user; this.tenant = data.tenant; this.roles = data.roles;
+        this.subscription = data.subscription;
       } catch { this.user = null; }
       finally { this.loaded = true; }
     },

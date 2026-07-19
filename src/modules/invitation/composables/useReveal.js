@@ -23,7 +23,21 @@ const PRESETS = {
 };
 
 async function initReveal(el, raw = {}) {
-  const opts = typeof raw === 'string' ? PRESETS[raw] : raw;
+  /* Bentuk nilai yang didukung:
+     - string preset                     : v-reveal="'fade-up'"
+     - objek opsi bebas                  : v-reveal="{ y: 60 }"
+     - objek { preset, scroller, ... }   : preset Filament + scroll container
+       kustom (selector CSS) — wajib untuk layout ber-panel scroll sendiri
+       seperti tema Senja, karena ScrollTrigger default hanya memantau window. */
+  let opts = raw;
+  if (typeof raw === 'string') {
+    opts = PRESETS[raw];
+  } else if (raw && typeof raw === 'object' && raw.preset !== undefined) {
+    const base = PRESETS[raw.preset];
+    if (base === null) return; // preset 'none' -> tanpa animasi
+    opts = { ...(base ?? {}), ...raw };
+    delete opts.preset;
+  }
   if (opts === null) return; // preset 'none' -> tanpa animasi
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   try {
@@ -40,6 +54,7 @@ async function initReveal(el, raw = {}) {
       ease: opts.ease ?? 'power2.out',
       scrollTrigger: {
         trigger: el,
+        ...(opts.scroller ? { scroller: opts.scroller } : {}),
         start: opts.start ?? 'top 82%',
         once: opts.once ?? true,
       },

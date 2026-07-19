@@ -29,15 +29,46 @@ export function useThemeOptions(invitationRef, featuresRef, tokensRef) {
       '--t-font-script': `'${f.script ?? tf.script ?? 'Great Vibes'}', cursive`,
     };
 
-    /* KUSTOMISASI KARTU (dari Filament). Hanya di-set bila admin mengisi,
-       supaya default theme.css tiap tema tetap berlaku saat kosong. */
+    /* TIPOGRAFI (judul & isi) dari Filament — channel --ov-* juga, dikonsumsi
+       theme.css dengan fallback ke default tema, mis.
+       .c-section__title { font-size: var(--ov-title-size, 2.4rem) }. */
+    const ty = opts.value.type ?? {};
+    if (ty.title_size)  vars['--ov-title-size']  = `${ty.title_size}px`;
+    if (ty.title_color) vars['--ov-title-color'] = ty.title_color;
+    if (ty.body_size)   vars['--ov-body-size']   = `${ty.body_size}px`;
+    if (ty.body_color)  vars['--ov-body-color']  = ty.body_color;
+
+    /* KUSTOMISASI KARTU (dari Filament) — ditulis ke CHANNEL OVERRIDE `--ov-*`,
+       BUKAN langsung `--card-*`. Alasannya: `--card-*` sering dideklarasi ulang
+       di theme.css tiap tema (mis. .theme-mildness { --card-radius: 1.75rem }),
+       dan properti yang di-set langsung pada sebuah elemen SELALU mengalahkan
+       nilai yang diwarisi dari wrapper induk (tempat cssVars ini menempel).
+       Dengan channel terpisah, tema meng-"konsumsi" override lewat fallback:
+         --card-radius: var(--ov-card-radius, 1.75rem)
+       sehingga override admin menang saat diisi, dan default tema tetap berlaku
+       saat kosong. FloatingCard juga membaca --ov-* (untuk tema yang tak
+       mendeklarasi --card-* sama sekali, mis. elegant/rustic). Hanya di-set
+       bila admin benar-benar mengisi, supaya default tetap utuh saat kosong. */
     const card = opts.value.card ?? {};
     const paperNow = c.paper ?? tc.paper ?? '#F7F4EC';
     if (card.bg || card.opacity != null) {
-      vars['--card-bg'] = hexToRgba(card.bg ?? paperNow, card.opacity ?? 100);
+      vars['--ov-card-bg'] = hexToRgba(card.bg ?? paperNow, card.opacity ?? 100);
     }
     if (card.radius !== undefined && card.radius !== null && card.radius !== '') {
-      vars['--card-radius'] = `${card.radius}px`;
+      vars['--ov-card-radius'] = `${card.radius}px`;
+    }
+    /* RADIUS PER SUDUT (v3) — menang atas radius tunggal lama; sudut yang
+       kosong jatuh ke radius tunggal, lalu ke default tema (FloatingCard
+       membaca longhand: --ov-card-rtl > --ov-card-radius > --card-radius). */
+    const CORNERS = { radius_tl: '--ov-card-rtl', radius_tr: '--ov-card-rtr', radius_bl: '--ov-card-rbl', radius_br: '--ov-card-rbr' };
+    for (const [key, cssVar] of Object.entries(CORNERS)) {
+      if (card[key] !== undefined && card[key] !== null && card[key] !== '') {
+        vars[cssVar] = `${card[key]}px`;
+      }
+    }
+    /* Font nama pasangan khusus hero (hero.name_font). */
+    if (opts.value.hero?.name_font) {
+      vars['--hero-name-font'] = `'${opts.value.hero.name_font}', cursive`;
     }
     const SHADOW = {
       none:   null,
@@ -47,7 +78,7 @@ export function useThemeOptions(invitationRef, featuresRef, tokensRef) {
     };
     if (card.shadow_size || card.shadow_color) {
       const size = SHADOW[card.shadow_size ?? 'sedang'];
-      vars['--card-shadow'] = size === null
+      vars['--ov-card-shadow'] = size === null
         ? 'none'
         : `${size} ${card.shadow_color ?? 'rgba(63, 91, 124, 0.35)'}`;
     }
@@ -62,7 +93,10 @@ export function useThemeOptions(invitationRef, featuresRef, tokensRef) {
       (feat[featKey] ?? false) && (sec[key]?.visible ?? true);
 
     return {
-      countdown:  on('countdown'),
+      countdown:      on('countdown'),
+      /* Countdown di SAMPUL (hero) — toggle TERPISAH dari countdown isi.
+         Tetap butuh fitur paket 'countdown' aktif, sama seperti isi. */
+      countdown_hero: (feat.countdown ?? false) && (sec.countdown_hero?.visible ?? true),
       couple:     sec.couple?.visible ?? true,
       events:     sec.events?.visible ?? true,
       co_host:    on('co_host'),
@@ -149,18 +183,86 @@ export function useThemeOptions(invitationRef, featuresRef, tokensRef) {
   /**
    * Tata letak:
    * - card         : kartu untuk section KONTEN (setelah undangan dibuka)
+   * - cardStyle    : 'default'|'glass'|'outline'|'flat'|'gradient'|'stamp'
+   *                  (kelas varian FloatingCard, dari theme_options.card.style)
    * - heroCard     : 'inherit' (ikut card) | 'card' | 'plain' — hero berdiri sendiri
-   * - sectionHeight: 'full' (satu layar penuh) | 'auto' (setinggi konten;
-   *                  solusi gap saat konten section pendek)
+   * - sectionHeight: 'full' (satu layar penuh) | 'auto' (setinggi konten) |
+   *                  'smart' (per-section: penuh jika section itu punya
+   *                  background, auto/tanpa-gap jika tidak)
    */
   const layoutOpts = computed(() => ({
     card:          opts.value.layout?.card ?? true,
+    cardStyle:     opts.value.card?.style ?? 'default',
     heroCard:      opts.value.layout?.hero_card ?? 'inherit',
     sectionHeight: opts.value.layout?.section_height ?? 'full',
   }));
 
-  /** Background per section — hanya dipakai saat mode kartu NONAKTIF. */
+  /** Background per section — hanya dipakai saat section itu TANPA kartu. */
   const sectionBg = (key) => opts.value.section_bg?.[key] ?? null;
+
+  /**
+   * TIPOGRAFI PER-SECTION (sections.{key}.font_heading/title_size/title_color/
+   * font_body/body_size/body_color), kosong = ikut nilai global (Global —
+   * Tipografi). Dipasang sebagai :style pada wrapper section (digabung
+   * dengan style lain).
+   *
+   * DUA MEKANISME BERBEDA, sengaja:
+   * - JUDUL (--t-font-head, --ov-title-size, --ov-title-color): custom
+   *   property CSS. Aman di-override di sini karena elemen judul di seluruh
+   *   section (SectionWrapper h3, theme.css tiap tema) MEMBACA ULANG var()
+   *   ini di posisinya masing-masing — override di wrapper section otomatis
+   *   "menang" untuk semua anak di bawahnya.
+   * - ISI (font_body/body_size/body_color): --t-font-body/--ov-body-size/
+   *   --ov-body-color HANYA dibaca SATU KALI di root <Layout> (bukan di
+   *   tiap section), jadi override var lewat wrapper section TIDAK akan
+   *   pernah terlihat (nothing downstream re-reads it). Makanya untuk isi,
+   *   properti CSS asli (fontFamily/fontSize/color) di-set LANGSUNG di sini
+   *   — inheritance biasa yang membawanya ke semua anak section ini,
+   *   persis mekanisme yang dipakai root Layout sendiri.
+   */
+  const sectionFontVars = (key) => {
+    const sec = opts.value.sections?.[key] ?? {};
+    const vars = {};
+    if (sec.font_heading) vars['--t-font-head']    = `'${sec.font_heading}', serif`;
+    if (sec.title_size)   vars['--ov-title-size']  = `${sec.title_size}px`;
+    if (sec.title_color)  vars['--ov-title-color'] = sec.title_color;
+    if (sec.font_body)  vars.fontFamily = `'${sec.font_body}', sans-serif`;
+    if (sec.body_size)  vars.fontSize   = `${sec.body_size}px`;
+    if (sec.body_color) vars.color      = sec.body_color;
+    return vars;
+  };
+
+  /**
+   * KARTU PER-SECTION (v3, bisa DI-MIX): sections.{key}.card = 'on'|'off'
+   * (kosong = ikut global layout.card), sections.{key}.card_style menimpa
+   * gaya global card.style. Layout memanggil sectionCard(key) per entry.
+   */
+  const sectionCard = (key) => {
+    const sec = opts.value.sections?.[key] ?? {};
+    const globalUse = opts.value.layout?.card ?? true;
+    return {
+      use:   sec.card === 'on' ? true : sec.card === 'off' ? false : globalUse,
+      style: sec.card_style ?? opts.value.card?.style ?? 'default',
+    };
+  };
+
+  /**
+   * HERO (v3): posisi konten, slideshow background (maks 3, rekomendasi
+   * di Filament), efek pergantian, dresscode di bawah countdown, dan gaya
+   * kartu khusus hero.
+   */
+  const hero = computed(() => {
+    const h = opts.value.hero ?? {};
+    return {
+      position:         h.position ?? 'split',            // split|center|bottom|left
+      slideshow:        Array.isArray(h.slideshow) ? h.slideshow.filter(Boolean).slice(0, 3) : [],
+      effect:           h.effect ?? 'fade',               // fade|kenburns
+      interval:         Math.min(12, Math.max(4, Number(h.interval) || 6)),
+      dresscodeEnabled: !!h.dresscode_enabled,
+      dresscode:        h.dresscode ?? '',
+      cardStyle:        h.card_style ?? opts.value.card?.style ?? 'default',
+    };
+  });
 
   /** Countdown: gaya angka + varian isi section (dipilih dari Filament). */
   const countdown = computed(() => {
@@ -176,7 +278,7 @@ export function useThemeOptions(invitationRef, featuresRef, tokensRef) {
   /** Preset animasi scroll GSAP (lihat composables/useReveal.js). */
   const animation = computed(() => opts.value.animation?.preset ?? 'fade-up');
 
-  return { cssVars, can, sectionOrder, labels, cover, florals, background, layoutOpts, sectionBg, countdown, animation };
+  return { cssVars, can, sectionOrder, labels, cover, florals, background, layoutOpts, sectionBg, sectionCard, sectionFontVars, hero, countdown, animation };
 }
 
 /** '#rrggbb' + opacity(0-100) -> 'rgba(...)'. Nilai tak valid dikembalikan apa adanya. */

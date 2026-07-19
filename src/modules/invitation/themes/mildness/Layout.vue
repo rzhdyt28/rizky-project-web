@@ -14,6 +14,7 @@
 import { computed, ref } from 'vue';
 import './theme.css';
 import Cover from './sections/Cover.vue';
+import BgSlideshow from '../../components/BgSlideshow.vue';
 import FloatingCard from '../../components/FloatingCard.vue';
 import FloralCorner from '../../components/FloralCorner.vue';
 import SectionRenderer from '../../components/SectionRenderer.vue';
@@ -36,12 +37,24 @@ const props = defineProps({
   background:   { type: Object, default: () => ({}) },
   layoutOpts:   { type: Object, default: () => ({ card: true }) },
   sectionBg:    { type: Function, default: () => null },
+  /* v3: resolver kartu PER-SECTION (bisa di-mix) — dari useThemeOptions. */
+  sectionCard:  { type: Function, default: null },
+  /* Font override PER-SECTION (sections.{key}.font_heading/font_body). */
+  sectionFontVars: { type: Function, default: () => ({}) },
+  /* v3: opsi hero (posisi, slideshow, efek, interval, dresscode, gaya kartu). */
+  hero:         { type: Object, default: () => ({}) },
   countdown:    { type: Object, default: () => ({}) },
   animation:    { type: String, default: 'fade-up' },
 });
 
 const opened  = ref(false);
 const useCard = computed(() => props.layoutOpts.card !== false);
+
+/* KARTU PER-SECTION (v3): tiap section boleh beda (mix). */
+function cardOf(key) {
+  if (props.sectionCard) return props.sectionCard(key);
+  return { use: useCard.value, style: props.layoutOpts.cardStyle };
+}
 
 /* HERO berdiri sendiri: 'card' | 'plain' | 'inherit' (ikut section konten). */
 const heroUseCard = computed(() => {
@@ -50,11 +63,23 @@ const heroUseCard = computed(() => {
   if (h === 'plain') return false;
   return useCard.value;
 });
+const heroCardStyle = computed(() => props.hero?.cardStyle ?? props.layoutOpts.cardStyle);
+const heroSlides = computed(() => props.hero?.slideshow ?? []);
 
-/* Solusi gap: tinggi section 'full' (satu layar) atau 'auto' (setinggi konten). */
-const screenClass = computed(() =>
-  props.layoutOpts.sectionHeight === 'auto' ? 'm-screen m-screen--auto' : 'm-screen'
-);
+/* Solusi gap — tinggi section:
+   'full'  : semua satu layar penuh;
+   'auto'  : semua setinggi konten;
+   'smart' : PER-SECTION — penuh hanya jika section itu punya background
+             (mode tanpa kartu); selain itu setinggi konten (tanpa gap). */
+function sectionScreenClass(key) {
+  const h = props.layoutOpts.sectionHeight;
+  if (h === 'auto') return 'm-screen m-screen--auto';
+  if (h === 'smart') {
+    const hasBg = !cardOf(key).use && !!props.sectionBg(key);
+    return hasBg ? 'm-screen' : 'm-screen m-screen--auto';
+  }
+  return 'm-screen';
+}
 
 const ctx = computed(() => ({
   invitation: props.invitation,
@@ -74,7 +99,7 @@ const activeCorners = computed(() =>
 
 /* Style background per-section (hanya mode tanpa kartu). */
 function screenStyle(key) {
-  const bg = !useCard.value ? props.sectionBg(key) : null;
+  const bg = !cardOf(key).use ? props.sectionBg(key) : null;
   return bg ? { backgroundImage: `url(${assetUrl(bg)})` } : null;
 }
 </script>
@@ -82,24 +107,35 @@ function screenStyle(key) {
 <template>
   <div
     class="relative min-h-screen font-light theme-mildness"
-    :style="{ color: 'var(--t-ink)', fontFamily: 'var(--t-font-body)' }"
+    :style="{
+      color: 'var(--ov-body-color, var(--t-ink))',
+      fontSize: 'var(--ov-body-size, 1rem)',
+      fontFamily: 'var(--t-font-body)',
+    }"
   >
     <!-- ===== LAPIS BACKGROUND HALAMAN (di belakang semua konten) ===== -->
     <div class="fixed inset-0 z-0 pointer-events-none">
-      <!-- lapis 1: foto pengantin (desktop; disembunyikan di HP bila ada
-           versi mobile) + foto potret khusus HP -->
+      <!-- lapis 1: SLIDESHOW (v3, bila diisi) MENGGANTIKAN foto statis -->
+      <BgSlideshow
+        v-if="heroSlides.length"
+        :images="heroSlides"
+        :effect="hero.effect"
+        :interval="hero.interval"
+      />
+      <!-- lapis 1 fallback: foto statis (desktop; disembunyikan di HP
+           bila ada versi mobile) + foto potret khusus HP -->
       <div
-        v-if="background.photo"
+        v-if="!heroSlides.length && background.photo"
         class="m-bg-photo m-bg-photo--desktop"
         :class="{ 'm-bg-photo--swap': background.photo_mobile }"
         :style="{ backgroundImage: `url(${assetUrl(background.photo)})` }"
       />
       <div
-        v-if="background.photo_mobile"
+        v-if="!heroSlides.length && background.photo_mobile"
         class="m-bg-photo m-bg-photo--mobile"
         :style="{ backgroundImage: `url(${assetUrl(background.photo_mobile)})` }"
       />
-      <div v-if="background.photo || background.photo_mobile" class="m-bg-veil" />
+      <div v-if="heroSlides.length || background.photo || background.photo_mobile" class="m-bg-veil" />
       <!-- lapis 2: ornamen di atas foto -->
       <div
         v-if="background.ornament"
@@ -117,12 +153,17 @@ function screenStyle(key) {
     </div>
 
     <!-- ===== COVER (satu layar penuh) ===== -->
-    <section v-if="!opened" class="relative z-10 m-screen">
+    <section
+      v-if="!opened"
+      class="relative z-10 m-screen"
+      :class="!heroUseCard ? `m-hero--${hero.position ?? 'split'}` : null"
+    >
       <div class="m-frame">
-        <FloatingCard v-if="heroUseCard">
+        <FloatingCard v-if="heroUseCard" :variant="heroCardStyle">
           <Cover
+            :hero="hero"
             :invitation="invitation"
-            :countdown-event="can.countdown ? invitation.events?.[0] : null"
+            :countdown-event="can.countdown_hero ? invitation.events?.[0] : null"
             :guest-name="guestName"
             :labels="labels"
             :cover="cover"
@@ -132,8 +173,9 @@ function screenStyle(key) {
         </FloatingCard>
         <Cover
           v-else
+          :hero="hero"
           :invitation="invitation"
-          :countdown-event="can.countdown ? invitation.events?.[0] : null"
+          :countdown-event="can.countdown_hero ? invitation.events?.[0] : null"
           :guest-name="guestName"
           :labels="labels"
           :cover="cover"
@@ -149,11 +191,11 @@ function screenStyle(key) {
         <section
           v-reveal="animation"
           class="relative z-10"
-          :class="[screenClass, { 'm-screen--bg': !useCard && sectionBg(entry.key) }]"
-          :style="screenStyle(entry.key)"
+          :class="[sectionScreenClass(entry.key), { 'm-screen--bg': !cardOf(entry.key).use && sectionBg(entry.key) }]"
+          :style="[screenStyle(entry.key), sectionFontVars(entry.key)]"
         >
           <div class="m-frame">
-            <FloatingCard v-if="useCard">
+            <FloatingCard v-if="cardOf(entry.key).use" :variant="cardOf(entry.key).style">
               <component :is="entry.comp" v-bind="entry.props" />
             </FloatingCard>
             <div v-else class="m-full">
@@ -165,7 +207,7 @@ function screenStyle(key) {
 
       <section v-reveal="animation" class="relative z-10 m-screen m-screen--short">
         <div class="m-frame">
-          <FloatingCard v-if="useCard">
+          <FloatingCard v-if="useCard" :variant="layoutOpts.cardStyle">
             <FooterSection :invitation="invitation" />
           </FloatingCard>
           <div v-else class="m-full">

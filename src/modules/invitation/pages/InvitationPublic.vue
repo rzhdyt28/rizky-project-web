@@ -22,10 +22,17 @@ const { data, isLoading, isError } = usePublicInvitation(
 const invitation = computed(() => data.value?.invitation ?? null);
 const features = computed(() => data.value?.features ?? {});
 
-const theme = computed(() => resolveTheme(invitation.value?.theme?.component_key));
+// PEWARISAN TEMA: backend mengirim component_keys = [tema ini, parent, ...].
+// resolveTheme mencoba berurutan — tema anak tanpa folder Vue sendiri otomatis
+// memakai layout parent-nya. Fallback ke component_key tunggal (data lama).
+const theme = computed(() =>
+  resolveTheme(
+    invitation.value?.theme?.component_keys ?? invitation.value?.theme?.component_key,
+  ),
+);
 const tokens = computed(() => theme.value.tokens);
 
-const { cssVars, can, sectionOrder, labels, cover, florals, background, layoutOpts, sectionBg, countdown, animation } =
+const { cssVars, can, sectionOrder, labels, cover, florals, background, layoutOpts, sectionBg, countdown, animation, sectionCard, sectionFontVars, hero } =
   useThemeOptions(invitation, features, tokens);
 
 const ThemeLayout = computed(() => theme.value.layout);
@@ -34,6 +41,46 @@ const ThemeLayout = computed(() => theme.value.layout);
 watchEffect(() => {
   if (invitation.value) {
     document.title = `Undangan ${invitation.value.groom_name} & ${invitation.value.bride_name}`;
+  }
+});
+
+/* ===== PEMUAT FONT DINAMIS =====
+   index.html hanya mem-preload Cormorant Garamond + Jost. Font lain yang
+   dipilih admin (nama Google Fonts bebas diketik di Filament) ATAU font
+   bawaan tema (tokens.js) dimuat otomatis di sini; font non-Google lewat
+   fonts.css_url. <link> di-dedupe per href supaya tidak dobel. */
+const PRELOADED = ["Cormorant Garamond", "Jost"];
+
+function injectStylesheet(href) {
+  if (!href || document.querySelector(`link[data-inv-font][href="${href}"]`)) return;
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = href;
+  link.setAttribute("data-inv-font", "");
+  document.head.appendChild(link);
+}
+
+watchEffect(() => {
+  if (!invitation.value) return;
+  const optFonts = invitation.value.theme_options?.fonts ?? {};
+  const tokFonts = tokens.value?.fonts ?? {};
+
+  // 1) Stylesheet kustom (Adobe Fonts / self-host @font-face)
+  if (optFonts.css_url) injectStylesheet(optFonts.css_url);
+
+  // 2) Nilai efektif tiap slot (override admin > token tema), lalu muat
+  //    yang belum ter-preload dari Google Fonts dalam SATU request.
+  const families = [
+    optFonts.heading ?? tokFonts.heading,
+    optFonts.body ?? tokFonts.body,
+    optFonts.script ?? tokFonts.script,
+  ].filter((f) => f && !PRELOADED.includes(f));
+
+  if (families.length) {
+    const q = [...new Set(families)]
+      .map((f) => `family=${encodeURIComponent(f).replace(/%20/g, "+")}:wght@400;500;600;700`)
+      .join("&");
+    injectStylesheet(`https://fonts.googleapis.com/css2?${q}&display=swap`);
   }
 });
 </script>
@@ -66,6 +113,9 @@ watchEffect(() => {
       :background="background"
       :layout-opts="layoutOpts"
       :section-bg="sectionBg"
+      :section-card="sectionCard"
+      :section-font-vars="sectionFontVars"
+      :hero="hero"
       :countdown="countdown"
       :animation="animation"
     />

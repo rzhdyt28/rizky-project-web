@@ -13,7 +13,7 @@ import { useAuthStore } from "../shared/stores/auth";
 // const CENTRAL_HOSTS = (import.meta.env.VITE_CENTRAL_HOSTS || 'rizky.test,localhost,127.0.0.1')
 const CENTRAL_HOSTS = (
   import.meta.env.VITE_CENTRAL_HOSTS ||
-  "rizky.test,localhost,127.0.0.1,192.168.0.107"
+  "rizky.test,localhost,127.0.0.1,192.168.0.107,192.168.0.84"
 ) //tambah host ip
   .split(",")
   .map((h) => h.trim());
@@ -46,9 +46,60 @@ const centralRoutes = [
   },
   {
     path: "/dashboard",
-    name: "dashboard",
-    component: () => import("../modules/dashboard/pages/MyInvitations.vue"),
+    component: () => import("../modules/dashboard/layouts/DashboardLayout.vue"),
     meta: { auth: true },
+    children: [
+      {
+        path: "",
+        name: "dashboard.home",
+        component: () => import("../modules/dashboard/pages/Beranda.vue"),
+      },
+      {
+        path: "undangan",
+        name: "dashboard.undangan",
+        component: () => import("../modules/dashboard/pages/UndanganSaya.vue"),
+      },
+      {
+        path: "edit",
+        name: "dashboard.edit",
+        component: () => import("../modules/dashboard/pages/EditUndangan.vue"),
+      },
+      {
+        path: "tamu",
+        name: "dashboard.tamu",
+        component: () => import("../modules/dashboard/pages/Tamu.vue"),
+      },
+      {
+        path: "acara",
+        name: "dashboard.acara",
+        component: () => import("../modules/dashboard/pages/Acara.vue"),
+      },
+      {
+        path: "kisah-cinta",
+        name: "dashboard.kisah-cinta",
+        component: () => import("../modules/dashboard/pages/KisahCinta.vue"),
+      },
+      {
+        path: "galeri",
+        name: "dashboard.galeri",
+        component: () => import("../modules/dashboard/pages/GaleriFoto.vue"),
+      },
+      {
+        path: "kado",
+        name: "dashboard.kado",
+        component: () => import("../modules/dashboard/pages/KadoDigital.vue"),
+      },
+      {
+        path: "rsvp",
+        name: "dashboard.rsvp",
+        component: () => import("../modules/dashboard/pages/Rsvp.vue"),
+      },
+      {
+        path: "ucapan",
+        name: "dashboard.ucapan",
+        component: () => import("../modules/dashboard/pages/UcapanDoa.vue"),
+      },
+    ],
   },
   {
     path: "/agent",

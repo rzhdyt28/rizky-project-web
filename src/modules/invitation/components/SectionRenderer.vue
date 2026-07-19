@@ -46,17 +46,19 @@ const CORE = {
   gift:       GiftSection,
 };
 
-/** Props tiap section — kontrak tunggal. */
+/** Props tiap section — kontrak tunggal. Opsi tampilan per-section (v3)
+ *  dibaca langsung dari invitation.theme_options (sudah ter-merge backend). */
 function propsFor(key) {
   const c = props.ctx;
+  const to = c.invitation.theme_options ?? {};
   switch (key) {
     case 'countdown':  return { event: c.invitation.events?.[0], invitation: c.invitation, labels: c.labels, opts: c.countdown ?? {} };
-    case 'couple':     return { invitation: c.invitation };
+    case 'couple':     return { invitation: c.invitation, opts: to.couple ?? {} };
     case 'events':     return { events: c.invitation.events, labels: c.labels, showMaps: c.can.maps };
     case 'co_host':    return { coHosts: c.invitation.co_hosts, labels: c.labels };
-    case 'love_story': return { stories: c.invitation.stories, labels: c.labels };
-    case 'gallery':    return { photos: c.invitation.photos, labels: c.labels };
-    case 'video':      return { videoUrl: c.invitation.video_url, labels: c.labels };
+    case 'love_story': return { stories: c.invitation.stories, labels: c.labels, showPhotos: to.love_story?.show_photos ?? false };
+    case 'gallery':    return { photos: c.invitation.photos, labels: c.labels, styleName: to.gallery?.style ?? 'carousel' };
+    case 'video':      return { videoUrl: c.invitation.video_url, labels: c.labels, invitation: c.invitation, opts: to.video ?? {} };
     case 'rsvp':       return { slug: c.slug, guestName: c.guestName, labels: c.labels };
     case 'guestbook':  return { slug: c.slug, guestName: c.guestName, guestbook: c.guestbook, labels: c.labels };
     case 'gift':       return { gifts: c.invitation.gifts, labels: c.labels };

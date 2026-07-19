@@ -8,10 +8,14 @@
   /* backdrop biru lembut di belakang kartu */
   background: linear-gradient(180deg, #dce7f0, #eef3f8 30%, #eef3f8 70%, #dce7f0);
 
-  /* kartu mengambang (dipakai FloatingCard global) */
-  --card-bg: var(--t-paper);
-  --card-radius: 1.75rem;
-  --card-shadow: 0 20px 45px -20px rgba(63, 91, 124, 0.35);
+  /* kartu mengambang (dipakai FloatingCard global).
+     Mengonsumsi override admin dari Filament (--ov-*) dengan fallback ke
+     default tema ini. Tanpa pola ini, override "Kartu — Tampilan" di Filament
+     tidak pernah berefek karena deklarasi langsung di sini mengalahkan nilai
+     warisan dari wrapper induk. */
+  --card-bg: var(--ov-card-bg, var(--t-paper));
+  --card-radius: var(--ov-card-radius, 1.75rem);
+  --card-shadow: var(--ov-card-shadow, 0 20px 45px -20px rgba(63, 91, 124, 0.35));
 
   /* ukuran floral pojok (dipakai FloralCorner global) */
   --floral-size: 7rem;
@@ -23,8 +27,9 @@
 /* Judul section pakai kaligrafi navy (mis. "Rangkaian Acara", "Galeri") */
 .theme-mildness .c-section__title {
   font-family: var(--t-font-script);
-  color: var(--t-accent);
-  font-size: 2.4rem;
+  /* Override tipografi admin (Filament) menang; kosong = default tema. */
+  color: var(--ov-title-color, var(--t-accent));
+  font-size: var(--ov-title-size, 2.4rem);
   line-height: 1.1;
 }
 .theme-mildness .c-section__rule { opacity: 0.4; }
@@ -215,4 +220,29 @@
 @media (max-width: 767px) {
   .theme-mildness .m-bg-photo--mobile { display: block; }
   .theme-mildness .m-bg-photo--desktop.m-bg-photo--swap { display: none; }
+}
+
+/* ============================================================
+   POSISI KONTEN HERO (v3) — berlaku saat hero TANPA kartu (full-foto).
+   Dipasang di <section> hero: m-hero--split|center|bottom|left.
+   'split' = perilaku default (tengah); lainnya menggeser flex container.
+   ============================================================ */
+.theme-mildness .m-screen.m-hero--center { align-items: center; }
+.theme-mildness .m-screen.m-hero--bottom {
+  align-items: flex-end;
+  padding-bottom: 4.5rem;
+}
+.theme-mildness .m-screen.m-hero--left {
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding-bottom: 4.5rem;
+  padding-left: 1.5rem;
+}
+.theme-mildness .m-screen.m-hero--left .m-frame {
+  margin-inline: 0;
+  text-align: left;
+}
+.theme-mildness .m-screen.m-hero--left .mild-cover {
+  align-items: flex-start;
+  text-align: left;
 }

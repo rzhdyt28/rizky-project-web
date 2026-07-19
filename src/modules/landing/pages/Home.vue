@@ -6,17 +6,13 @@
  * cukup tautan kecil di footer.
  */
 import { RouterLink } from 'vue-router';
-import elegantTokens from '../../invitation/themes/elegant/tokens';
-import rusticTokens from '../../invitation/themes/rustic/tokens';
 import mildnessTokens from '../../invitation/themes/mildness/tokens';
 
 /* Galeri tema dirakit dari tokens asli tiap tema — swatch warnanya selalu
    sinkron dengan kenyataan, bukan hardcode yang bisa basi. */
 const THEMES = [
   { key: 'mildness', name: 'Mildness', desc: 'Dusty-blue lembut, kartu mengambang, nama kaligrafi.', tokens: mildnessTokens, demo: '/i/via-andra' },
-  { key: 'elegant',  name: 'Elegant',  desc: 'Hijau klasik dengan monogram dan nuansa formal.',       tokens: elegantTokens,  demo: '/i/budi-siti-free' },
-  { key: 'rustic',   name: 'Rustic',   desc: 'Cokelat hangat bergaya kertas alami.',                  tokens: rusticTokens,   demo: '/i/rian-dewi-platinum'},
-];
+  ];
 
 const FEATURES = [
   { icon: 'M12 8v4l2.5 2.5M12 21a9 9 0 1 1 0-18 9 9 0 0 1 0 18z', title: 'Hitung Mundur', desc: 'Countdown otomatis menuju hari bahagia.' },

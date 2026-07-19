@@ -3,10 +3,9 @@
  * MILDNESS/Cover — hidup DI DALAM kartu mengambang (dibungkus Layout).
  * Nama kaligrafi + tanggal titik-pisah "28 • 03 • 2026" + countdown
  * lingkaran + tombol amplop.
- * Kontrak cover: ornament (slot atas), ornament_bottom (slot bawah, opsional).
+ * Ornamen dalam kartu sudah DIHAPUS dari produk (keputusan v2.1).
  */
 import { computed } from 'vue';
-import OrnamentDivider from '../../_core/ui/OrnamentDivider.vue';
 import CountdownSection from '../../_core/sections/CountdownSection.vue';
 
 const props = defineProps({
@@ -16,11 +15,11 @@ const props = defineProps({
   cover:      { type: Object, default: () => ({}) },
   countdownEvent: { type: Object, default: null },
   countdownOpts:  { type: Object, default: () => ({}) },
+  /* v3: opsi hero — dipakai untuk dresscode (di bawah countdown) & font nama. */
+  hero:           { type: Object, default: () => ({}) },
 });
 
 const emit = defineEmits(['open']);
-
-const ornament = computed(() => props.cover.ornament ?? props.cover.ornament_top ?? null);
 
 const firstEvent = computed(() => props.invitation.events?.[0] ?? null);
 
@@ -47,15 +46,13 @@ const dateDots = computed(() => {
   <!-- Foto pengantin TIDAK lagi jadi latar kartu — foto kini lapis
        background halaman (di belakang kartu), diatur dari Filament. -->
   <div class="relative flex flex-col items-center w-full gap-4 px-6 py-10 text-center mild-cover">
-    <OrnamentDivider :image="ornament" />
-
     <p class="text-xs tracking-[0.15em]" :style="{ color: 'var(--t-ink)', opacity: 0.75 }">
       Undangan Pernikahan
     </p>
 
     <h1
       class="text-4xl leading-tight sm:text-5xl"
-      :style="{ fontFamily: 'var(--t-font-script)', color: 'var(--t-accent)' }"
+      :style="{ fontFamily: 'var(--hero-name-font, var(--t-font-script))', color: 'var(--t-accent)' }"
     >
       {{ invitation.bride_name }} &amp; {{ invitation.groom_name }}
     </h1>
@@ -66,6 +63,12 @@ const dateDots = computed(() => {
     </div>
 
     <CountdownSection v-if="countdownEvent" :event="countdownEvent" :opts="coverCd" class="w-full" />
+
+    <!-- v3: DRESSCODE — posisi: di bawah countdown hero (toggle dari Filament) -->
+    <div v-if="hero.dresscodeEnabled && hero.dresscode" class="mild-dresscode">
+      <span class="mild-dresscode__label">Dress Code</span>
+      <span class="mild-dresscode__text">{{ hero.dresscode }}</span>
+    </div>
 
     <div v-if="guestName" class="grid gap-1 mt-1">
       <small class="text-xs tracking-[0.1em]" :style="{ opacity: 0.7 }">Kepada:</small>
@@ -83,13 +86,27 @@ const dateDots = computed(() => {
       </svg>
       {{ labels.btn_open }}
     </button>
-
-    <OrnamentDivider v-if="cover.ornament_bottom" :image="cover.ornament_bottom" flip />
   </div>
 </template>
 
 <style scoped>
 .mild-cover { animation: mildFade 1.1s ease-out both; }
+.mild-dresscode {
+  display: grid;
+  gap: 0.15rem;
+  justify-items: center;
+}
+.mild-dresscode__label {
+  font-size: 10px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--t-gold);
+}
+.mild-dresscode__text {
+  font-size: 0.9rem;
+  font-style: italic;
+  font-family: var(--t-font-head);
+}
 @keyframes mildFade {
   from { opacity: 0; transform: translateY(14px); }
   to   { opacity: 1; transform: translateY(0); }

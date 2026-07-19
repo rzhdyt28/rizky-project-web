@@ -1,0 +1,321 @@
+/* ============================================================
+   TEMA SENJA — split-screen matahari terbenam.
+   Scope: .theme-senja — mustahil bocor ke tema lain.
+   KIRI: panel identitas DIAM (coklat senja + titik cahaya).
+   KANAN: kolom undangan dengan SCROLL SENDIRI (klik "Buka" hanya
+   menggulir panel ini; kiri tak bergerak).
+   ============================================================ */
+
+.theme-senja {
+  /* kartu mengambang — konsumsi override admin (--ov-*) dg fallback tema */
+  --card-bg: var(--ov-card-bg, var(--t-paper));
+  --card-radius: var(--ov-card-radius, 1.4rem);
+  --card-shadow: var(--ov-card-shadow, 0 20px 45px -20px rgba(74, 35, 24, 0.4));
+  background: #2f1810;
+}
+
+/* ===== KERANGKA DUA PANEL ===== */
+.theme-senja.senja-root {
+  display: flex;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+/* Panel kiri: sembunyi di HP, tampil di layar lebar. */
+.theme-senja .senja-left {
+  display: none;
+  position: relative;
+  flex: 1 1 auto;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  color: #f6e7d8;
+  background:
+    radial-gradient(120% 90% at 85% 20%, rgba(217, 160, 91, 0.18), transparent 55%),
+    linear-gradient(165deg, #432013, #341409 70%);
+}
+@media (min-width: 1024px) {
+  .theme-senja .senja-left { display: flex; }
+}
+
+/* Titik cahaya senja (kunang-kunang) — murni CSS, tanpa aset. */
+.theme-senja .senja-left__sparkles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(2.5px 2.5px at 18% 24%, rgba(255, 214, 150, 0.9), transparent 60%),
+    radial-gradient(2px 2px at 62% 15%, rgba(255, 214, 150, 0.55), transparent 60%),
+    radial-gradient(3px 3px at 44% 46%, rgba(255, 224, 170, 0.8), transparent 60%),
+    radial-gradient(1.8px 1.8px at 78% 58%, rgba(255, 214, 150, 0.5), transparent 60%),
+    radial-gradient(2.2px 2.2px at 30% 72%, rgba(255, 224, 170, 0.65), transparent 60%),
+    radial-gradient(1.6px 1.6px at 55% 86%, rgba(255, 214, 150, 0.45), transparent 60%),
+    radial-gradient(2px 2px at 8% 55%, rgba(255, 214, 150, 0.4), transparent 60%);
+  animation: senjaTwinkle 5.5s ease-in-out infinite alternate;
+}
+@keyframes senjaTwinkle {
+  from { opacity: 0.55; }
+  to   { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .theme-senja .senja-left__sparkles { animation: none; }
+}
+
+.theme-senja .senja-left__inner {
+  position: relative;
+  max-width: 30rem;
+  padding: 2rem;
+  text-align: center;
+  display: grid;
+  gap: 0.9rem;
+  justify-items: center;
+}
+.theme-senja .senja-left__eyebrow {
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  opacity: 0.85;
+}
+.theme-senja .senja-left__names {
+  font-family: var(--t-font-script);
+  font-size: clamp(2.4rem, 3.6vw, 3.4rem);
+  line-height: 1.15;
+  color: #fdf3e3;
+}
+.theme-senja .senja-left__date {
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+  color: var(--t-gold);
+}
+.theme-senja .senja-left__rule {
+  display: block;
+  width: 3rem;
+  height: 1px;
+  background: color-mix(in srgb, var(--t-gold) 70%, transparent);
+}
+.theme-senja .senja-left__quote {
+  max-width: 24rem;
+  font-size: 0.9rem;
+  font-style: italic;
+  line-height: 1.7;
+  opacity: 0.82;
+}
+.theme-senja .senja-left__guest { display: grid; gap: 0.15rem; margin-top: 0.4rem; }
+.theme-senja .senja-left__guest small  { font-size: 0.72rem; letter-spacing: 0.12em; opacity: 0.7; }
+.theme-senja .senja-left__guest strong { font-weight: 500; font-size: 1.02rem; }
+
+/* Panel kanan: kolom undangan ber-scroll sendiri. */
+.theme-senja .senja-right {
+  position: relative;
+  flex: 1 1 auto;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: linear-gradient(180deg, #fdf4e9, var(--t-paper) 25%);
+}
+@media (min-width: 1024px) {
+  .theme-senja .senja-right {
+    flex: 0 0 460px;
+    width: 460px;
+    box-shadow: -22px 0 48px rgba(30, 12, 6, 0.45);
+  }
+}
+
+/* ===== HERO (di dalam panel kanan) ===== */
+.theme-senja .senja-hero {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow: hidden;
+  display: flex;
+}
+.theme-senja .senja-hero__photo {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+/* Tanpa foto sama sekali: gradasi senja sebagai pengganti. */
+.theme-senja .senja-hero__veil {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(58, 29, 18, 0.35), rgba(58, 29, 18, 0.05) 34%, rgba(43, 20, 12, 0.72) 88%),
+    linear-gradient(200deg, #b9713c, #6d3418 60%, #3a1d12);
+}
+.theme-senja .senja-hero__photo ~ .senja-hero__veil {
+  /* Ada foto: selubung tipis saja supaya foto tetap dominan. */
+  background: linear-gradient(180deg, rgba(58, 29, 18, 0.4), transparent 35%, rgba(43, 20, 12, 0.68) 90%);
+}
+.theme-senja .senja-hero__photo--mobile { display: none; }
+@media (max-width: 767px) {
+  .theme-senja .senja-hero__photo--mobile { display: block; }
+  .theme-senja .senja-hero__photo--desktop.senja-hero__photo--swap { display: none; }
+}
+
+.theme-senja .senja-hero__content {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem 1.5rem 2.6rem;
+  text-align: center;
+  color: #fdf3e3;
+}
+.theme-senja .senja-hero__eyebrow {
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-shadow: 0 1px 8px rgba(30, 12, 6, 0.5);
+}
+.theme-senja .senja-hero__bottom {
+  display: grid;
+  gap: 0.9rem;
+  justify-items: center;
+  width: 100%;
+}
+.theme-senja .senja-hero__names {
+  display: grid;
+  gap: 0.15rem;
+  font-family: var(--hero-name-font, var(--t-font-script));
+  font-size: clamp(2.5rem, 9vw, 3.2rem);
+  line-height: 1.12;
+  text-shadow: 0 2px 14px rgba(30, 12, 6, 0.55);
+}
+.theme-senja .senja-hero__amp { font-size: 0.62em; opacity: 0.9; }
+.theme-senja .senja-hero__date {
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-shadow: 0 1px 8px rgba(30, 12, 6, 0.55);
+}
+.theme-senja .senja-hero__countdown { width: 100%; }
+.theme-senja .senja-hero__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  border: 0;
+  border-radius: 9999px;
+  padding: 0.8rem 1.7rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: var(--t-btn-bg);
+  color: var(--t-btn-text);
+  box-shadow: 0 10px 24px -10px rgba(30, 12, 6, 0.6);
+  transition: opacity 0.2s, transform 0.2s;
+}
+.theme-senja .senja-hero__btn:hover { opacity: 0.92; transform: translateY(-1px); }
+.theme-senja .senja-hero__btn-icon { width: 1rem; height: 1rem; }
+.theme-senja .senja-hero__guest { display: grid; gap: 0.1rem; }
+.theme-senja .senja-hero__guest small  { font-size: 0.7rem; letter-spacing: 0.12em; opacity: 0.85; }
+.theme-senja .senja-hero__guest strong { font-weight: 600; font-size: 0.95rem; }
+
+/* ===== SECTIONS (panel kanan, setelah dibuka) ===== */
+.theme-senja .s-screen {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.2rem 1rem;
+  background-size: cover;
+  background-position: center;
+}
+.theme-senja .s-screen--auto {
+  min-height: 0;
+  padding-top: 1.8rem;
+  padding-bottom: 1.8rem;
+}
+/* Mode tanpa kartu + background per-section: selubung krem agar terbaca. */
+.theme-senja .s-screen--bg { position: relative; }
+.theme-senja .s-screen--bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 248, 240, 0.8);
+}
+.theme-senja .senja-frame {
+  position: relative;
+  width: 100%;
+  max-width: 26rem;
+  margin-inline: auto;
+}
+.theme-senja .senja-frame .g-card { width: 100%; }
+.theme-senja .senja-full { width: 100%; }
+
+/* ===== GAYA KOMPONEN _CORE (class hook) ===== */
+.theme-senja .c-section__title {
+  font-family: var(--t-font-script);
+  color: var(--ov-title-color, var(--t-accent));
+  font-size: var(--ov-title-size, 2.3rem);
+  line-height: 1.1;
+}
+.theme-senja .c-section__rule { opacity: 0.45; }
+.theme-senja .c-panel { background: transparent; border-color: transparent; }
+.theme-senja .c-input { border-radius: 0.6rem; }
+.theme-senja .c-btn   { border-radius: 9999px; }
+
+/* Countdown gaya CIRCLE (default Senja): lingkaran amber, angka krem —
+   seperti bulatan "00 00 00 00" pada referensi. 4 gaya lain memakai default
+   netral komponen (tetap terbaca) dan bisa diperkaya di sini kapan pun. */
+.theme-senja .c-countdown__timer--circle .c-countdown__box {
+  background: color-mix(in srgb, var(--t-gold) 78%, #6d3418);
+  border-radius: 9999px;
+  width: clamp(46px, 12vw, 56px);
+  height: clamp(46px, 12vw, 56px);
+  min-width: 0;
+  padding: 0;
+}
+.theme-senja .c-countdown__timer--circle .c-countdown__num   { color: #fff8ee; font-size: 1.02rem; }
+.theme-senja .c-countdown__timer--circle .c-countdown__label { color: rgba(255, 248, 238, 0.85); font-size: 8px; }
+
+/* Di dalam hero (teks di atas foto), eyebrow & label countdown ikut krem. */
+.theme-senja .senja-hero .c-countdown__eyebrow { color: rgba(253, 243, 227, 0.9); }
+.theme-senja .senja-hero .c-countdown__num     { color: #fff8ee; }
+.theme-senja .senja-hero .c-countdown__label   { color: rgba(253, 243, 227, 0.85); }
+.theme-senja .senja-hero .c-countdown__box     { background: rgba(255, 248, 238, 0.16); }
+.theme-senja .senja-hero .c-countdown__timer--circle .c-countdown__box {
+  background: color-mix(in srgb, var(--t-gold) 78%, #6d3418);
+}
+
+
+/* ============================================================
+   POSISI KONTEN HERO (v3) — senja-hero--split|center|bottom|left.
+   'split' = perilaku default (eyebrow atas, konten bawah).
+   ============================================================ */
+.theme-senja .senja-hero--center .senja-hero__content {
+  justify-content: center;
+  gap: 1.2rem;
+}
+.theme-senja .senja-hero--center .senja-hero__bottom { margin-top: 0; }
+.theme-senja .senja-hero--bottom .senja-hero__content { justify-content: flex-end; }
+.theme-senja .senja-hero--bottom .senja-hero__eyebrow { display: none; }
+.theme-senja .senja-hero--left .senja-hero__content {
+  justify-content: flex-end;
+  align-items: flex-start;
+  text-align: left;
+}
+.theme-senja .senja-hero--left .senja-hero__names { align-items: flex-start; }
+.theme-senja .senja-hero--left .senja-hero__bottom { align-items: flex-start; }
+
+/* DRESSCODE di hero (v3) — di bawah countdown. */
+.theme-senja .senja-hero__dresscode {
+  display: grid;
+  gap: 0.15rem;
+  justify-items: center;
+}
+.theme-senja .senja-hero--left .senja-hero__dresscode { justify-items: flex-start; }
+.theme-senja .senja-hero__dresscode small {
+  font-size: 10px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--t-gold);
+}
+.theme-senja .senja-hero__dresscode span {
+  font-size: 0.9rem;
+  font-style: italic;
+  font-family: var(--t-font-head);
+}

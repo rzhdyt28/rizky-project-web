@@ -1,3 +1,4 @@
+import { computed } from 'vue';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import { api } from '../../../shared/api/client';
 
@@ -31,6 +32,25 @@ export function useGuestbook(slug) {
 export function useMyInvitations() {
   return useQuery({
     queryKey: ['my-invitations'],
-    queryFn: async () => (await api.get(`${base}/`)).data,
+    // TANPA trailing slash: rutenya persis /api/invitation (apiResource '/').
+    // Dengan slash, Apache 301-redirect ke Location absolut (host backend
+    // asli), yang lolos dari proxy dev Vite dan jadi cross-origin nyata ->
+    // browser blokir sebagai "Network Error".
+    queryFn: async () => (await api.get(base)).data,
+    retry: 1,
   });
+}
+
+/**
+ * Undangan yang sedang "aktif" di halaman CRUD (Acara, Kisah Cinta, dst).
+ * Kuota paket saat ini membatasi 1 undangan/tenant, jadi diambil yang
+ * pertama — halaman pemakainya cukup tunggu `invitation` terisi sebelum
+ * memanggil composable resource (useEvents, dst) dengan id-nya.
+ */
+export function useActiveInvitation() {
+  const { data, isLoading, isError, error } = useMyInvitations();
+  const invitations = computed(() => data.value?.data ?? []);
+  const invitation = computed(() => invitations.value[0] ?? null);
+
+  return { invitation, invitations, isLoading, isError, error };
 }
