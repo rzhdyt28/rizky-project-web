@@ -1,8 +1,11 @@
 <script setup>
-import { computed, reactive, ref } from 'vue';
+import { computed, ref } from 'vue';
 import InvitationGate from '../components/InvitationGate.vue';
+import BaseInput from '../../../shared/components/BaseInput.vue';
+import BaseButton from '../../../shared/components/BaseButton.vue';
 import { useGifts } from '../../invitation/composables/useGifts';
 import { assetUrl } from '../../invitation/composables/assets';
+import { useEditableForm } from '../composables/useEditableForm';
 
 const gate = ref(null);
 const invitationId = computed(() => gate.value?.invitation?.id ?? null);
@@ -10,31 +13,22 @@ const { list, create, update, remove } = useGifts(invitationId);
 
 const TYPE_LABEL = { bank: 'Rekening Bank', ewallet: 'E-Wallet', qris: 'QRIS', address: 'Alamat Kirim' };
 const EMPTY = { type: 'bank', provider: '', account_name: '', account_number: '', shipping_address: '' };
-const editingId = ref(null);
-const form = reactive({ ...EMPTY });
 const qrisFile = ref(null);
-const err = ref('');
 
-function startEdit(g) {
-  editingId.value = g.id;
-  Object.assign(form, {
+const { editingId, form, err, startEdit, resetForm, submit } = useEditableForm(EMPTY, {
+  defaultErrorMessage: 'Gagal menyimpan metode kado.',
+  mapToForm: (g) => ({
     type: g.type, provider: g.provider ?? '', account_name: g.account_name ?? '',
     account_number: g.account_number ?? '', shipping_address: g.shipping_address ?? '',
-  });
-  qrisFile.value = null;
-}
-function resetForm() { editingId.value = null; Object.assign(form, EMPTY); qrisFile.value = null; }
-function onFile(e) { qrisFile.value = e.target.files[0] ?? null; }
+  }),
+  onReset: () => { qrisFile.value = null; },
+  onSubmit: (form, id) => {
+    const payload = { ...form, qris_image: qrisFile.value };
+    return id ? update.mutateAsync({ id, payload }) : create.mutateAsync(payload);
+  },
+});
 
-async function submit() {
-  err.value = '';
-  const payload = { ...form, qris_image: qrisFile.value };
-  try {
-    if (editingId.value) await update.mutateAsync({ id: editingId.value, payload });
-    else await create.mutateAsync(payload);
-    resetForm();
-  } catch (e) { err.value = e.response?.data?.message || 'Gagal menyimpan metode kado.'; }
-}
+function onFile(e) { qrisFile.value = e.target.files[0] ?? null; }
 </script>
 
 <template>
@@ -46,18 +40,18 @@ async function submit() {
         </select>
 
         <template v-if="form.type === 'bank' || form.type === 'ewallet'">
-          <input v-model="form.provider" class="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800" placeholder="mis. BCA, OVO, Dana" />
-          <input v-model="form.account_name" class="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800" placeholder="Atas nama" />
-          <input v-model="form.account_number" class="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800" placeholder="Nomor rekening/HP" />
+          <BaseInput v-model="form.provider" placeholder="mis. BCA, OVO, Dana" />
+          <BaseInput v-model="form.account_name" placeholder="Atas nama" />
+          <BaseInput v-model="form.account_number" placeholder="Nomor rekening/HP" />
         </template>
         <input v-if="form.type === 'qris'" type="file" accept="image/*" class="text-sm" @change="onFile" />
-        <textarea v-if="form.type === 'address'" v-model="form.shipping_address" class="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800" rows="2" placeholder="Alamat kirim kado" />
+        <BaseInput v-if="form.type === 'address'" v-model="form.shipping_address" as="textarea" rows="2" placeholder="Alamat kirim kado" />
 
         <div class="flex gap-2">
-          <button class="rounded-lg bg-slate-800 px-4 py-2 text-sm text-white dark:bg-slate-700" :disabled="create.isPending.value || update.isPending.value">
+          <BaseButton type="submit" :disabled="create.isPending.value || update.isPending.value">
             {{ editingId ? 'Simpan Perubahan' : 'Tambah Metode' }}
-          </button>
-          <button v-if="editingId" type="button" class="rounded-lg border border-slate-200 px-4 py-2 text-sm dark:border-slate-700" @click="resetForm">Batal</button>
+          </BaseButton>
+          <BaseButton v-if="editingId" variant="secondary" @click="resetForm">Batal</BaseButton>
         </div>
       </form>
       <p v-if="err" class="mt-2 text-sm text-red-600 dark:text-red-400">{{ err }}</p>
@@ -75,8 +69,8 @@ async function submit() {
           </div>
         </div>
         <div class="flex gap-2">
-          <button class="rounded-full border border-slate-200 px-3 py-1 text-xs dark:border-slate-700" @click="startEdit(g)">Ubah</button>
-          <button class="rounded-full border border-red-300 px-3 py-1 text-xs text-red-600 dark:border-red-800 dark:text-red-400" @click="remove.mutate(g.id)">Hapus</button>
+          <BaseButton variant="pill" @click="startEdit(g)">Ubah</BaseButton>
+          <BaseButton variant="pill-danger" @click="remove.mutate(g.id)">Hapus</BaseButton>
         </div>
       </li>
     </ul>

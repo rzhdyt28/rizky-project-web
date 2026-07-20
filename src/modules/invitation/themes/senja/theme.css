@@ -31,9 +31,14 @@
   align-items: center;
   justify-content: center;
   color: #f6e7d8;
-  background:
+  /* --senja-left-bg: diisi inline dari admin (hero.senja_left_bg) kalau ada
+     -- kosong = fallback gradient asli di bawah ini, tema tetap tampil sama
+     persis tanpa pengaturan apa pun (lihat Layout.vue). */
+  background: var(
+    --senja-left-bg,
     radial-gradient(120% 90% at 85% 20%, rgba(217, 160, 91, 0.18), transparent 55%),
-    linear-gradient(165deg, #432013, #341409 70%);
+    linear-gradient(165deg, #432013, #341409 70%)
+  );
 }
 @media (min-width: 1024px) {
   .theme-senja .senja-left { display: flex; }

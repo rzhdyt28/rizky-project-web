@@ -46,6 +46,15 @@ async function onBgFile(e) {
         <option v-for="(label, v) in CARD_STYLES" :key="v" :value="v">{{ label }}</option>
       </select>
     </div>
+    <div>
+      <label class="mb-1 block text-xs opacity-70">Tinggi section ini</label>
+      <select v-model="section.height" class="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-800">
+        <option value="">Ikut pengaturan global</option>
+        <option value="full">Satu layar penuh</option>
+        <option value="auto">Setinggi konten (tanpa gap)</option>
+        <option value="smart">Otomatis (penuh jika ada background)</option>
+      </select>
+    </div>
     <div class="sm:col-span-2">
       <label class="mb-1 block text-xs opacity-70">Background section (mode tanpa kartu)</label>
       <input type="file" accept="image/*" class="text-sm" @change="onBgFile" />

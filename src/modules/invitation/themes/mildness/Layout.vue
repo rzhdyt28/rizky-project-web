@@ -39,6 +39,8 @@ const props = defineProps({
   sectionBg:    { type: Function, default: () => null },
   /* v3: resolver kartu PER-SECTION (bisa di-mix) — dari useThemeOptions. */
   sectionCard:  { type: Function, default: null },
+  /* v3: resolver tinggi/gap PER-SECTION (bisa di-mix) — dari useThemeOptions. */
+  sectionHeight: { type: Function, default: null },
   /* Font override PER-SECTION (sections.{key}.font_heading/font_body). */
   sectionFontVars: { type: Function, default: () => ({}) },
   /* v3: opsi hero (posisi, slideshow, efek, interval, dresscode, gaya kartu). */
@@ -72,7 +74,7 @@ const heroSlides = computed(() => props.hero?.slideshow ?? []);
    'smart' : PER-SECTION — penuh hanya jika section itu punya background
              (mode tanpa kartu); selain itu setinggi konten (tanpa gap). */
 function sectionScreenClass(key) {
-  const h = props.layoutOpts.sectionHeight;
+  const h = props.sectionHeight ? props.sectionHeight(key) : props.layoutOpts.sectionHeight;
   if (h === 'auto') return 'm-screen m-screen--auto';
   if (h === 'smart') {
     const hasBg = !cardOf(key).use && !!props.sectionBg(key);
@@ -167,6 +169,7 @@ function screenStyle(key) {
             :guest-name="guestName"
             :labels="labels"
             :cover="cover"
+            :background="background"
             :countdown-opts="countdown"
             @open="opened = true"
           />
@@ -179,6 +182,7 @@ function screenStyle(key) {
           :guest-name="guestName"
           :labels="labels"
           :cover="cover"
+          :background="background"
           :countdown-opts="countdown"
           @open="opened = true"
         />

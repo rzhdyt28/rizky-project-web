@@ -1,39 +1,32 @@
 import { unref } from 'vue';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
+import { useMutation } from '@tanstack/vue-query';
 import { api } from '../../../shared/api/client';
+import { useCrudResource } from '../../../shared/composables/useCrudResource';
 
-const base = (id) => `/api/invitation/${id}/photos`;
+const baseUrl = (id) => `/api/invitation/${id}/photos`;
 
-/** invitationId boleh ref/computed atau nilai biasa — query menunggu sampai terisi. */
+/** invitationId boleh ref/computed atau nilai biasa — query menunggu sampai terisi.
+ * `upload`/`updateCaption`/`reorder` tidak cocok dengan bentuk create/update
+ * generik (field mapping & method berbeda), jadi tetap didefinisikan di sini,
+ * di atas `list`/`remove`/`invalidate` dari factory bersama. */
 export function useGalleryPhotos(invitationId) {
-  const qc = useQueryClient();
-  const invalidate = () => qc.invalidateQueries({ queryKey: ['gallery-photos', invitationId] });
-
-  const list = useQuery({
-    queryKey: ['gallery-photos', invitationId],
-    queryFn: async () => (await api.get(base(unref(invitationId)))).data,
-    enabled: () => !!unref(invitationId),
-  });
+  const { list, remove, invalidate } = useCrudResource(invitationId, { baseUrl, resourceName: 'gallery-photos' });
 
   const upload = useMutation({
     mutationFn: ({ file, caption }) => {
       const fd = new FormData();
       fd.append('photo', file);
       if (caption) fd.append('caption', caption);
-      return api.post(base(unref(invitationId)), fd);
+      return api.post(baseUrl(unref(invitationId)), fd);
     },
     onSuccess: invalidate,
   });
   const updateCaption = useMutation({
-    mutationFn: ({ id, caption }) => api.put(`${base(unref(invitationId))}/${id}`, { caption }),
-    onSuccess: invalidate,
-  });
-  const remove = useMutation({
-    mutationFn: (id) => api.delete(`${base(unref(invitationId))}/${id}`),
+    mutationFn: ({ id, caption }) => api.put(`${baseUrl(unref(invitationId))}/${id}`, { caption }),
     onSuccess: invalidate,
   });
   const reorder = useMutation({
-    mutationFn: (order) => api.post(`${base(unref(invitationId))}/reorder`, { order }),
+    mutationFn: (order) => api.post(`${baseUrl(unref(invitationId))}/reorder`, { order }),
     onSuccess: invalidate,
   });
 

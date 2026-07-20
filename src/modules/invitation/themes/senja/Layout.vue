@@ -37,6 +37,8 @@ const props = defineProps({
   sectionBg:    { type: Function, default: () => null },
   /* v3: resolver kartu PER-SECTION (mix) + opsi hero. */
   sectionCard:  { type: Function, default: null },
+  /* v3: resolver tinggi/gap PER-SECTION (bisa di-mix) — dari useThemeOptions. */
+  sectionHeight: { type: Function, default: null },
   /* Font override PER-SECTION (sections.{key}.font_heading/font_body). */
   sectionFontVars: { type: Function, default: () => ({}) },
   hero:         { type: Object, default: () => ({}) },
@@ -80,7 +82,7 @@ const ctx = computed(() => ({
 
 /* Tinggi section — logika sama dengan mildness (full/auto/smart). */
 function sectionScreenClass(key) {
-  const h = props.layoutOpts.sectionHeight;
+  const h = props.sectionHeight ? props.sectionHeight(key) : props.layoutOpts.sectionHeight;
   if (h === 'auto') return 's-screen s-screen--auto';
   if (h === 'smart') {
     const hasBg = !cardOf(key).use && !!props.sectionBg(key);
@@ -120,7 +122,9 @@ const quote = computed(() =>
     }"
   >
     <!-- ===== PANEL KIRI — DIAM (desktop saja) ===== -->
-    <aside class="senja-left">
+    <!-- background: override admin (hero.senjaLeftBg, lihat InvitationLookResource)
+         kalau diisi -- kosong = fallback gradient asli di theme.css, tidak berubah. -->
+    <aside class="senja-left" :style="hero.senjaLeftBg ? { '--senja-left-bg': hero.senjaLeftBg } : null">
       <div class="senja-left__sparkles" aria-hidden="true" />
       <div class="senja-left__inner">
         <p class="senja-left__eyebrow">Undangan Pernikahan</p>

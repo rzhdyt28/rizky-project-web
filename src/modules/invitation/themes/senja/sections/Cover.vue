@@ -6,6 +6,13 @@
  * tanggal, countdown (gaya angka ikut Filament), tombol "Buka Undangan"
  * pil krem, dan "Kepada: {tamu}". Setelah dibuka, tombol hilang —
  * countdown & "Kepada" tetap (mengikuti referensi screenshot 2).
+ *
+ * CATATAN: tema ini TIDAK membaca `hero.style` (classic/framed/split/
+ * minimal/custom, lihat ThemeOptionsSchema::HERO_STYLES di backend) —
+ * Senja sengaja cuma punya satu layout hero tetap (split-screen di atas).
+ * Kalau admin memilih hero.style untuk undangan bertema Senja, pilihan itu
+ * disimpan tapi diabaikan di sini. Hanya `hero.position` yang dipakai
+ * (untuk varian CSS, lihat `senja-hero--${hero.position}` di bawah).
  */
 import { computed } from 'vue';
 import BgSlideshow from '../../../components/BgSlideshow.vue';

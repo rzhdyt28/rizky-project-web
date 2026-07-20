@@ -54,9 +54,9 @@ function propsFor(key) {
   switch (key) {
     case 'countdown':  return { event: c.invitation.events?.[0], invitation: c.invitation, labels: c.labels, opts: c.countdown ?? {} };
     case 'couple':     return { invitation: c.invitation, opts: to.couple ?? {} };
-    case 'events':     return { events: c.invitation.events, labels: c.labels, showMaps: c.can.maps };
+    case 'events':     return { events: c.invitation.events, labels: c.labels, showMaps: c.can.maps, styleName: to.events?.style ?? 'card' };
     case 'co_host':    return { coHosts: c.invitation.co_hosts, labels: c.labels };
-    case 'love_story': return { stories: c.invitation.stories, labels: c.labels, showPhotos: to.love_story?.show_photos ?? false };
+    case 'love_story': return { stories: c.invitation.stories, labels: c.labels, showPhotos: to.love_story?.show_photos ?? false, styleName: to.love_story?.style ?? 'stacked' };
     case 'gallery':    return { photos: c.invitation.photos, labels: c.labels, styleName: to.gallery?.style ?? 'carousel' };
     case 'video':      return { videoUrl: c.invitation.video_url, labels: c.labels, invitation: c.invitation, opts: to.video ?? {} };
     case 'rsvp':       return { slug: c.slug, guestName: c.guestName, labels: c.labels };

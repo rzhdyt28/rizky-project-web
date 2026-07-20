@@ -1,8 +1,14 @@
 <script setup>
 /** Reorder pakai tombol naik/turun (bukan drag-and-drop) — tidak ada
- * library drag di project ini, dan ini tetap mencapai hasil yang sama. */
+ * library drag di project ini, dan ini tetap mencapai hasil yang sama.
+ * Halaman ini tidak punya form "tambah/ubah" seperti 3 halaman CRUD
+ * lain (upload langsung, caption diedit inline per-baris), jadi tidak
+ * memakai useEditableForm — hanya komponen dasar (BaseInput/BaseButton)
+ * yang dipakai bersama. */
 import { computed, ref } from 'vue';
 import InvitationGate from '../components/InvitationGate.vue';
+import BaseInput from '../../../shared/components/BaseInput.vue';
+import BaseButton from '../../../shared/components/BaseButton.vue';
 import { useGalleryPhotos } from '../../invitation/composables/useGalleryPhotos';
 import { assetUrl } from '../../invitation/composables/assets';
 
@@ -43,8 +49,8 @@ function move(index, dir) {
     <div class="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
       <form class="grid gap-2 sm:grid-cols-[auto_1fr_auto]" @submit.prevent="submit">
         <input type="file" accept="image/*" class="text-sm" required @change="onFile" />
-        <input v-model="caption" class="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800" placeholder="Keterangan (opsional)" maxlength="255" />
-        <button class="rounded-lg bg-slate-800 px-4 py-2 text-sm text-white dark:bg-slate-700" :disabled="upload.isPending.value">Unggah</button>
+        <BaseInput v-model="caption" placeholder="Keterangan (opsional)" maxlength="255" />
+        <BaseButton type="submit" :disabled="upload.isPending.value">Unggah</BaseButton>
       </form>
       <p v-if="err" class="mt-2 text-sm text-red-600 dark:text-red-400">{{ err }}</p>
     </div>
@@ -61,10 +67,10 @@ function move(index, dir) {
         />
         <div class="flex items-center justify-between gap-1">
           <div class="flex gap-1">
-            <button class="rounded-full border border-slate-200 px-2 py-0.5 text-xs dark:border-slate-700" :disabled="i === 0" @click="move(i, -1)">↑</button>
-            <button class="rounded-full border border-slate-200 px-2 py-0.5 text-xs dark:border-slate-700" :disabled="i === list.data.value.length - 1" @click="move(i, 1)">↓</button>
+            <BaseButton variant="pill" :disabled="i === 0" @click="move(i, -1)">↑</BaseButton>
+            <BaseButton variant="pill" :disabled="i === list.data.value.length - 1" @click="move(i, 1)">↓</BaseButton>
           </div>
-          <button class="rounded-full border border-red-300 px-2 py-0.5 text-xs text-red-600 dark:border-red-800 dark:text-red-400" @click="remove.mutate(p.id)">Hapus</button>
+          <BaseButton variant="pill-danger" @click="remove.mutate(p.id)">Hapus</BaseButton>
         </div>
       </li>
     </ul>

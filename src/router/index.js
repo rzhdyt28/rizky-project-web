@@ -13,7 +13,7 @@ import { useAuthStore } from "../shared/stores/auth";
 // const CENTRAL_HOSTS = (import.meta.env.VITE_CENTRAL_HOSTS || 'rizky.test,localhost,127.0.0.1')
 const CENTRAL_HOSTS = (
   import.meta.env.VITE_CENTRAL_HOSTS ||
-  "rizky.test,localhost,127.0.0.1,192.168.0.107,192.168.0.84"
+  "rizky.test,localhost,127.0.0.1,192.168.0.107,192.168.0.84,192.168.1.109"
 ) //tambah host ip
   .split(",")
   .map((h) => h.trim());

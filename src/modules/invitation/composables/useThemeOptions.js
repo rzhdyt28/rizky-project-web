@@ -201,6 +201,14 @@ export function useThemeOptions(invitationRef, featuresRef, tokensRef) {
   const sectionBg = (key) => opts.value.section_bg?.[key] ?? null;
 
   /**
+   * TINGGI/GAP PER-SECTION (bisa DI-MIX, mis. section berkartu pakai 'auto'
+   * biar rapat/tanpa-gap, section tanpa-kartu+background pakai 'full'):
+   * sections.{key}.height = 'full'|'auto'|'smart' (kosong = ikut global
+   * layout.section_height). Layout memanggil sectionHeight(key) per entry.
+   */
+  const sectionHeight = (key) => opts.value.sections?.[key]?.height || layoutOpts.value.sectionHeight;
+
+  /**
    * TIPOGRAFI PER-SECTION (sections.{key}.font_heading/title_size/title_color/
    * font_body/body_size/body_color), kosong = ikut nilai global (Global —
    * Tipografi). Dipasang sebagai :style pada wrapper section (digabung
@@ -254,6 +262,8 @@ export function useThemeOptions(invitationRef, featuresRef, tokensRef) {
   const hero = computed(() => {
     const h = opts.value.hero ?? {};
     return {
+      style:            h.style ?? 'classic',              // classic|framed|split|minimal|custom
+      elements:         h.elements ?? {},                 // mode 'custom': { [key]: { order, align } }
       position:         h.position ?? 'split',            // split|center|bottom|left
       slideshow:        Array.isArray(h.slideshow) ? h.slideshow.filter(Boolean).slice(0, 3) : [],
       effect:           h.effect ?? 'fade',               // fade|kenburns
@@ -261,6 +271,10 @@ export function useThemeOptions(invitationRef, featuresRef, tokensRef) {
       dresscodeEnabled: !!h.dresscode_enabled,
       dresscode:        h.dresscode ?? '',
       cardStyle:        h.card_style ?? opts.value.card?.style ?? 'default',
+      // Khusus tema Senja: override background panel kiri (lihat
+      // themes/senja/Layout.vue + InvitationLookResource). null = tema lain
+      // abaikan ini / Senja jatuh ke gradient asli di theme.css.
+      senjaLeftBg:      h.senja_left_bg || null,
     };
   });
 
@@ -278,7 +292,7 @@ export function useThemeOptions(invitationRef, featuresRef, tokensRef) {
   /** Preset animasi scroll GSAP (lihat composables/useReveal.js). */
   const animation = computed(() => opts.value.animation?.preset ?? 'fade-up');
 
-  return { cssVars, can, sectionOrder, labels, cover, florals, background, layoutOpts, sectionBg, sectionCard, sectionFontVars, hero, countdown, animation };
+  return { cssVars, can, sectionOrder, labels, cover, florals, background, layoutOpts, sectionBg, sectionHeight, sectionCard, sectionFontVars, hero, countdown, animation };
 }
 
 /** '#rrggbb' + opacity(0-100) -> 'rgba(...)'. Nilai tak valid dikembalikan apa adanya. */

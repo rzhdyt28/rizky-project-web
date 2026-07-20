@@ -32,7 +32,7 @@ const theme = computed(() =>
 );
 const tokens = computed(() => theme.value.tokens);
 
-const { cssVars, can, sectionOrder, labels, cover, florals, background, layoutOpts, sectionBg, countdown, animation, sectionCard, sectionFontVars, hero } =
+const { cssVars, can, sectionOrder, labels, cover, florals, background, layoutOpts, sectionBg, sectionHeight, countdown, animation, sectionCard, sectionFontVars, hero } =
   useThemeOptions(invitation, features, tokens);
 
 const ThemeLayout = computed(() => theme.value.layout);
@@ -113,6 +113,7 @@ watchEffect(() => {
       :background="background"
       :layout-opts="layoutOpts"
       :section-bg="sectionBg"
+      :section-height="sectionHeight"
       :section-card="sectionCard"
       :section-font-vars="sectionFontVars"
       :hero="hero"

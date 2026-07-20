@@ -1,51 +1,45 @@
 <script setup>
-import { computed, reactive, ref } from 'vue';
+import { computed, ref } from 'vue';
 import InvitationGate from '../components/InvitationGate.vue';
+import BaseInput from '../../../shared/components/BaseInput.vue';
+import BaseButton from '../../../shared/components/BaseButton.vue';
 import { useStories } from '../../invitation/composables/useStories';
 import { assetUrl } from '../../invitation/composables/assets';
+import { useEditableForm } from '../composables/useEditableForm';
 
 const gate = ref(null);
 const invitationId = computed(() => gate.value?.invitation?.id ?? null);
 const { list, create, update, remove } = useStories(invitationId);
 
 const EMPTY = { title: '', happened_at: '', story: '' };
-const editingId = ref(null);
-const form = reactive({ ...EMPTY });
 const photoFile = ref(null);
-const err = ref('');
 
-function startEdit(s) {
-  editingId.value = s.id;
-  Object.assign(form, { title: s.title, happened_at: s.happened_at?.slice(0, 10) ?? '', story: s.story });
-  photoFile.value = null;
-}
-function resetForm() { editingId.value = null; Object.assign(form, EMPTY); photoFile.value = null; }
+const { editingId, form, err, startEdit, resetForm, submit } = useEditableForm(EMPTY, {
+  defaultErrorMessage: 'Gagal menyimpan kisah.',
+  mapToForm: (s) => ({ title: s.title, happened_at: s.happened_at?.slice(0, 10) ?? '', story: s.story }),
+  onReset: () => { photoFile.value = null; },
+  onSubmit: (form, id) => {
+    const payload = { ...form, photo: photoFile.value };
+    return id ? update.mutateAsync({ id, payload }) : create.mutateAsync(payload);
+  },
+});
+
 function onFile(e) { photoFile.value = e.target.files[0] ?? null; }
-
-async function submit() {
-  err.value = '';
-  const payload = { ...form, photo: photoFile.value };
-  try {
-    if (editingId.value) await update.mutateAsync({ id: editingId.value, payload });
-    else await create.mutateAsync(payload);
-    resetForm();
-  } catch (e) { err.value = e.response?.data?.message || 'Gagal menyimpan kisah.'; }
-}
 </script>
 
 <template>
   <InvitationGate ref="gate" title="Kisah Cinta" subtitle="Cerita perjalanan kalian, tampil berurutan di undangan.">
     <div class="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
       <form class="grid gap-2" @submit.prevent="submit">
-        <input v-model="form.title" class="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800" placeholder="Judul kisah" required maxlength="150" />
-        <input v-model="form.happened_at" type="date" class="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800" />
-        <textarea v-model="form.story" class="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800" rows="3" placeholder="Cerita" required maxlength="2000" />
+        <BaseInput v-model="form.title" placeholder="Judul kisah" required maxlength="150" />
+        <BaseInput v-model="form.happened_at" type="date" />
+        <BaseInput v-model="form.story" as="textarea" rows="3" placeholder="Cerita" required maxlength="2000" />
         <input type="file" accept="image/*" class="text-sm" @change="onFile" />
         <div class="flex gap-2">
-          <button class="rounded-lg bg-slate-800 px-4 py-2 text-sm text-white dark:bg-slate-700" :disabled="create.isPending.value || update.isPending.value">
+          <BaseButton type="submit" :disabled="create.isPending.value || update.isPending.value">
             {{ editingId ? 'Simpan Perubahan' : 'Tambah Kisah' }}
-          </button>
-          <button v-if="editingId" type="button" class="rounded-lg border border-slate-200 px-4 py-2 text-sm dark:border-slate-700" @click="resetForm">Batal</button>
+          </BaseButton>
+          <BaseButton v-if="editingId" variant="secondary" @click="resetForm">Batal</BaseButton>
         </div>
       </form>
       <p v-if="err" class="mt-2 text-sm text-red-600 dark:text-red-400">{{ err }}</p>
@@ -63,8 +57,8 @@ async function submit() {
           </div>
         </div>
         <div class="flex gap-2">
-          <button class="rounded-full border border-slate-200 px-3 py-1 text-xs dark:border-slate-700" @click="startEdit(s)">Ubah</button>
-          <button class="rounded-full border border-red-300 px-3 py-1 text-xs text-red-600 dark:border-red-800 dark:text-red-400" @click="remove.mutate(s.id)">Hapus</button>
+          <BaseButton variant="pill" @click="startEdit(s)">Ubah</BaseButton>
+          <BaseButton variant="pill-danger" @click="remove.mutate(s.id)">Hapus</BaseButton>
         </div>
       </li>
     </ul>
