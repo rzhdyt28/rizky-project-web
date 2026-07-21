@@ -15,6 +15,7 @@ const { experiences, loading, error, fetchDocumentation } =
   usePortfolioDocumentation();
 
 const lightboxUrl = ref(null);
+const showScrollTop = ref(false);
 
 function openLightbox(url) {
   lightboxUrl.value = url;
@@ -30,8 +31,16 @@ function handleKeydown(e) {
   if (e.key === "Escape") closeLightbox();
 }
 
+function handleScroll() {
+  showScrollTop.value = window.scrollY > 400;
+}
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 onMounted(async () => {
   window.addEventListener("keydown", handleKeydown);
+  window.addEventListener("scroll", handleScroll, { passive: true });
   await fetchDocumentation();
   if (route.hash) {
     await nextTick();
@@ -41,6 +50,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   window.removeEventListener("keydown", handleKeydown);
+  window.removeEventListener("scroll", handleScroll);
   document.body.style.overflow = ""; // bug fix: jaga-jaga kalau unmount saat lightbox masih terbuka
 });
 
@@ -83,23 +93,33 @@ function fmtDate(exp) {
       @toggle-lang="toggleLang"
     />
 
-    <section class="pt-hero" style="padding-top: 70px; padding-bottom: 20px">
-      <div class="pt-hero__location">$ ls ~/portfolio/</div>
-      <h1 class="pt-hero__name" style="font-size: 1.8rem">
+    <header class="pt-page-head">
+      <p class="pt-hero__location mono">$ ls ~/portfolio/</p>
+      <h1 class="pt-page-title">
         {{
           lang === "id"
             ? "Portofolio & Dokumentasi Kerja"
             : "Portfolio & Work Documentation"
         }}
       </h1>
-      <p class="pt-hero__desc">
+      <p class="pt-page-lead">
         {{
           lang === "id"
             ? "Dokumentasi foto dan hasil pekerjaan dari setiap pengalaman kerja. Klik gambar untuk memperbesar."
             : "Photo documentation and work results from each role. Click any image to enlarge."
         }}
       </p>
-    </section>
+
+      <nav v-if="experiences.length" class="pt-jump-nav">
+        <a
+          v-for="exp in experiences"
+          :key="exp.id"
+          :href="'#' + exp.slug"
+          class="pt-jump"
+          >{{ exp.slug }}/</a
+        >
+      </nav>
+    </header>
 
     <div v-if="loading" class="pt-section">// loading...</div>
 
@@ -123,11 +143,11 @@ function fmtDate(exp) {
         :key="exp.id"
         class="pt-doc-group"
       >
-        <div class="pt-timeline-item__date">{{ fmtDate(exp) }}</div>
-        <h2 style="color: #fff; font-size: 1.3rem; margin: 4px 0 8px">
+        <p class="pt-timeline-item__date mono">{{ fmtDate(exp) }}</p>
+        <h2 class="pt-page-title" style="font-size: clamp(20px, 3vw, 27px); margin: 6px 0 12px">
           {{ t(exp.role) }} — {{ exp.company }}
         </h2>
-        <div v-if="exp.tags?.length" class="pt-doc-group__tags">
+        <div v-if="exp.tags?.length" class="pt-doc-group__tags mono">
           {{ exp.tags.join(" · ") }}
         </div>
 
@@ -136,19 +156,15 @@ function fmtDate(exp) {
             v-for="photo in exp.photos"
             :key="photo.id"
             class="pt-doc-photo"
+            @click="openLightbox(photo.url)"
           >
-            <img
-              :src="photo.url"
-              :alt="t(photo.caption)"
-              loading="lazy"
-              @click="openLightbox(photo.url)"
-            />
+            <img :src="photo.url" :alt="t(photo.caption)" loading="lazy" />
             <figcaption class="pt-doc-photo__caption">
               {{ t(photo.caption) }}
             </figcaption>
           </figure>
         </div>
-        <p v-else style="color: var(--text-dim); font-size: 0.85rem">
+        <p v-else style="color: var(--muted); font-size: 0.85rem">
           {{
             lang === "id"
               ? "Belum ada foto dokumentasi."
@@ -168,5 +184,14 @@ function fmtDate(exp) {
       </button>
       <img :src="lightboxUrl" alt="" @click.stop />
     </div>
+
+    <button
+      class="pt-scroll-top"
+      :class="{ 'is-visible': showScrollTop }"
+      aria-label="Back to top"
+      @click="scrollToTop"
+    >
+      ↑
+    </button>
   </div>
 </template>

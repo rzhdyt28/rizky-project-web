@@ -9,31 +9,35 @@ defineProps({
 defineEmits(["toggle-lang"]);
 
 const isOpen = ref(false);
+const isSticky = ref(false);
 
-// Bug fix: kalau menu mobile dibiarkan terbuka lalu layar di-resize
-// ke ukuran desktop (>768px), pastikan state ditutup supaya tidak
-// nyangkut kebuka saat balik ke ukuran mobile lagi.
 function handleResize() {
-  if (window.innerWidth > 768) isOpen.value = false;
+  if (window.innerWidth > 720) isOpen.value = false;
 }
 
-onMounted(() => window.addEventListener("resize", handleResize));
-onUnmounted(() => window.removeEventListener("resize", handleResize));
+function handleScroll() {
+  isSticky.value = window.scrollY > 20;
+}
+
+function closeMenu() {
+  isOpen.value = false;
+}
+
+onMounted(() => {
+  window.addEventListener("resize", handleResize);
+  window.addEventListener("scroll", handleScroll, { passive: true });
+  handleScroll();
+});
+onUnmounted(() => {
+  window.removeEventListener("resize", handleResize);
+  window.removeEventListener("scroll", handleScroll);
+});
 </script>
 
 <template>
-  <nav class="pt-nav">
+  <nav class="pt-nav" :class="{ 'is-sticky': isSticky }">
     <div class="pt-nav__row">
-      <span class="pt-nav__brand">{{ brand }}▊</span>
-
-      <button
-        class="pt-nav__burger"
-        :aria-expanded="isOpen"
-        aria-label="Toggle menu"
-        @click="isOpen = !isOpen"
-      >
-        <span :class="{ 'is-open': isOpen }"></span>
-      </button>
+      <span class="pt-nav__brand">{{ brand }}</span>
 
       <div class="pt-nav__links pt-nav__links--desktop">
         <component
@@ -49,16 +53,28 @@ onUnmounted(() => window.removeEventListener("resize", handleResize));
           {{ lang }} | {{ lang === "id" ? "en" : "id" }}
         </button>
       </div>
+
+      <button
+        class="pt-nav__burger"
+        :aria-expanded="isOpen"
+        aria-label="Toggle menu"
+        @click="isOpen = !isOpen"
+      >
+        <span :class="{ 'is-open': isOpen }"></span>
+      </button>
     </div>
 
-    <div v-if="isOpen" class="pt-nav__links pt-nav__links--mobile">
+    <div
+      class="pt-nav__links pt-nav__links--mobile"
+      :class="{ 'is-open': isOpen }"
+    >
       <component
         :is="l.to.startsWith('#') ? 'a' : 'router-link'"
         v-for="l in links"
         :key="l.to"
         :href="l.to.startsWith('#') ? l.to : undefined"
         :to="l.to.startsWith('#') ? undefined : l.to"
-        @click="isOpen = false"
+        @click="closeMenu"
       >
         {{ l.label }}
       </component>

@@ -13,7 +13,7 @@ import { useAuthStore } from "../shared/stores/auth";
 // const CENTRAL_HOSTS = (import.meta.env.VITE_CENTRAL_HOSTS || 'rizky.test,localhost,127.0.0.1')
 const CENTRAL_HOSTS = (
   import.meta.env.VITE_CENTRAL_HOSTS ||
-  "rizky.test,localhost,127.0.0.1,192.168.0.107,192.168.0.84,192.168.1.109"
+  "rizky.test,localhost,127.0.0.1,192.168.0.107,192.168.0.84,192.168.1.109,10.140.125.222"
 ) //tambah host ip
   .split(",")
   .map((h) => h.trim());
@@ -38,6 +38,12 @@ const centralRoutes = [
     path: "/portfolio",
     name: "portfolio",
     component: () => import("../modules/portfolio/pages/PortfolioHome.vue"),
+  },
+  {
+    path: "/portfolio/documentation",
+    name: "portfolio.documentation",
+    component: () =>
+      import("../modules/portfolio/pages/PortfolioDocumentation.vue"),
   },
   {
     path: "/login",

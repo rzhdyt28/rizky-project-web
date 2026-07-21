@@ -65,8 +65,8 @@
     "semantic_hash": "6138f1d6dc4682b25eb1fa14471d98e5"
   },
   "src/modules/invitation/composables/useThemeOptions.js": {
-    "mtime": 1784490050.5386515,
-    "ast_hash": "9e015fe28622b6e9d7fd70a1af34a1bf",
+    "mtime": 1784569562.6346226,
+    "ast_hash": "6b52408e89f4f231ee4463b645cff4c7",
     "semantic_hash": ""
   },
   "src/modules/invitation/pages/InvitationPublic.vue": {
@@ -195,8 +195,8 @@
     "semantic_hash": "e6ab3a261a6c0e7bbc1d999449323bcc"
   },
   "src/modules/invitation/themes/senja/Layout.vue": {
-    "mtime": 1784486297.1802902,
-    "ast_hash": "cb3d51e64f766046f107cbb391ff59ac",
+    "mtime": 1784569538.4267182,
+    "ast_hash": "402a0e7ce8a738ce6a4370e7d2999908",
     "semantic_hash": ""
   },
   "src/modules/invitation/themes/senja/sections/Cover.vue": {

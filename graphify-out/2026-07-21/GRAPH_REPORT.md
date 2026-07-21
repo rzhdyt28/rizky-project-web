@@ -1,7 +1,7 @@
-# Graph Report - rizky-project-web  (2026-07-20)
+# Graph Report - rizky-project-web  (2026-07-21)
 
 ## Corpus Check
-- 98 files · ~31,854 words
+- 98 files · ~31,914 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
