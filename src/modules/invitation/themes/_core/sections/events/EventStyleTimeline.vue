@@ -20,7 +20,7 @@ const timeShort = (d) => new Date(d).toLocaleTimeString('id-ID',
     <article v-for="ev in events" :key="ev.id" class="relative pb-10 text-center c-event__tl-item last:pb-0">
       <span class="relative z-10 grid mx-auto mb-4 c-event__node place-items-center">✦</span>
       <div class="max-w-xs px-4 py-4 mx-auto c-event__tl-card">
-        <h4 class="mb-1 text-lg" :style="{ fontFamily: 'var(--t-font-head)', color: 'var(--el-name-color, var(--t-accent))', fontSize: 'var(--el-name-size, 1.125rem)' }">{{ ev.title }}</h4>
+        <h4 class="mb-1 text-lg" :style="{ fontFamily: 'var(--el-name-font, var(--t-font-head))', color: 'var(--el-name-color, var(--t-accent))', fontSize: 'var(--el-name-size, 1.125rem)' }">{{ ev.title }}</h4>
         <p class="mb-1 text-sm capitalize" :style="{ color: 'var(--el-date-color)', fontSize: 'var(--el-date-size)' }">{{ dateLong(ev.starts_at) }}</p>
         <p class="text-sm" :style="{ color: 'var(--el-date-color)', fontSize: 'var(--el-date-size)' }">
           Pukul {{ timeShort(ev.starts_at) }}<span v-if="ev.ends_at"> – {{ timeShort(ev.ends_at) }}</span> WIB

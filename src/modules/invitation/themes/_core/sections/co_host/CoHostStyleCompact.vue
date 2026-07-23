@@ -27,13 +27,14 @@ defineProps({
 .c-cohost__compact-tag {
   flex-shrink: 0;
   min-width: 5.5rem;
+  font-family: var(--el-label-font, var(--t-font-accent));
   font-size: var(--el-label-size, 10px);
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: var(--el-label-color, var(--t-gold, #b08d4a));
 }
 .c-cohost__compact-name {
-  font-family: var(--t-font-head, serif);
+  font-family: var(--el-name-font, var(--t-font-head, serif));
   font-size: var(--el-name-size);
   color: var(--el-name-color, inherit);
 }

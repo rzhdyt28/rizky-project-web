@@ -18,7 +18,7 @@ defineEmits(['open']);
 
 <template>
   <div class="relative flex flex-col items-center w-full gap-4 px-6 py-10 text-center mild-cover">
-    <p class="text-xs tracking-[0.15em]" :style="{ color: 'var(--hero-el-eyebrow-color, var(--t-ink))', fontSize: 'var(--hero-el-eyebrow-size, 0.75rem)', opacity: 0.75 }">Undangan Pernikahan</p>
+    <p class="text-xs tracking-[0.15em]" :style="{ fontFamily: 'var(--hero-el-eyebrow-font, var(--t-font-accent))', color: 'var(--hero-el-eyebrow-color, var(--t-ink))', fontSize: 'var(--hero-el-eyebrow-size, 0.75rem)', opacity: 0.75 }">Undangan Pernikahan</p>
     <h1 class="leading-tight" :style="{ fontFamily: 'var(--hero-name-font, var(--t-font-script))', color: 'var(--hero-el-names-color, var(--t-accent))', fontSize: 'var(--hero-el-names-size, clamp(2.25rem, 5vw, 3rem))' }">
       {{ invitation.bride_name }} &amp; {{ invitation.groom_name }}
     </h1>
@@ -54,6 +54,7 @@ defineEmits(['open']);
 }
 .mild-dresscode__label {
   font-size: 10px;
+  font-family: var(--t-font-accent);
   letter-spacing: 0.35em;
   text-transform: uppercase;
   color: var(--hero-el-dresscode-color, var(--t-gold));

@@ -16,5 +16,6 @@ export default {
     heading: 'Cormorant Garamond',
     body:    'Jost',
     script:  'Great Vibes',
+    accent:  'Jost', // label kecil kapital (eyebrow/label/caption/credit)
   },
 };

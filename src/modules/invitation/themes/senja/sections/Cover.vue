@@ -15,6 +15,7 @@
  * (untuk varian CSS, lihat `senja-hero--${hero.position}` di bawah).
  */
 import { computed } from 'vue';
+import { FONT_CATEGORY_VAR } from '../../../composables/useThemeOptions';
 import BgSlideshow from '../../../components/BgSlideshow.vue';
 import BgVideo from '../../../components/BgVideo.vue';
 import CountdownSection from '../../_core/sections/countdown/CountdownSection.vue';
@@ -48,14 +49,18 @@ const elVars = computed(() => {
   for (const key of TEXT_ELEMENTS) {
     const el = els[key];
     if (!el) continue;
-    if (el.font)  vars[`--hero-el-${key}-font`]  = `'${el.font}', serif`;
+    if (FONT_CATEGORY_VAR[el.font]) vars[`--hero-el-${key}-font`] = `var(${FONT_CATEGORY_VAR[el.font]})`;
     if (el.size)  vars[`--hero-el-${key}-size`]  = `${el.size}px`;
     if (el.color) vars[`--hero-el-${key}-color`] = el.color;
   }
-  // Field lama "Font nama pasangan di hero" -> tulis ke var lama juga supaya
-  // .senja-hero__names (var(--hero-name-font, ...)) tetap otomatis ikut.
-  const nameFont = els.names?.font || props.hero?.nameFont;
-  if (nameFont) vars['--hero-name-font'] = `'${nameFont}', cursive`;
+  // Field lama "Font nama pasangan di hero" (data lama, literal nama font
+  // bebas, BUKAN kategori) -> tulis ke var lama juga supaya .senja-hero__names
+  // (var(--hero-name-font, ...)) tetap otomatis ikut untuk undangan lama.
+  if (FONT_CATEGORY_VAR[els.names?.font]) {
+    vars['--hero-name-font'] = `var(${FONT_CATEGORY_VAR[els.names.font]})`;
+  } else if (props.hero?.nameFont) {
+    vars['--hero-name-font'] = `'${props.hero.nameFont}', cursive`;
+  }
   return vars;
 });
 

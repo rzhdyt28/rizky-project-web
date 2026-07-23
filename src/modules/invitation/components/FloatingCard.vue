@@ -132,4 +132,63 @@ defineProps({
   -webkit-mask-repeat: no-repeat, round;
   mask-repeat: no-repeat, round;
 }
+
+/* ===== 5 GAYA KARTU BARU BERKARAKTER (v6) — bertema Java/Modern/Klasik/dst,
+   sama pola dengan varian di atas: menghormati --ov-card-bg (warna admin)
+   & --ov-card-shadow bila diisi, fallback ke token warna tema. ===== */
+
+/* JAVA — border ganda emas-cokelat: solid tebal di luar + putus-putus tipis
+   di dalam (motif batik disederhanakan jadi garis, BUKAN gambar impor, sesuai
+   konvensi ornamen SVG orisinal proyek ini). */
+.g-card--java {
+  background: var(--ov-card-bg, var(--t-paper, #fff));
+  border: 3px solid var(--t-gold, #b08d4a);
+  outline: 1px dashed color-mix(in srgb, var(--t-accent, #8a4b2a) 55%, transparent);
+  outline-offset: -7px;
+  box-shadow: var(--ov-card-shadow, 0 18px 40px -22px rgba(0, 0, 0, 0.3));
+}
+
+/* BRUTALIST (Modern) — flat tegas: sudut KOTAK (bukan rounded), border tebal
+   solid, shadow OFFSET keras (bukan blur lembut) -- karakter berani/modern. */
+.g-card--brutalist {
+  background: var(--ov-card-bg, var(--t-paper, #fff));
+  border: 2.5px solid var(--t-ink, #222);
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  box-shadow: 8px 8px 0 0 var(--t-accent, #333);
+}
+
+/* VINTAGE (Klasik) — bingkai ganda ala pigura foto lama: garis tipis di tepi
+   + garis ganda (double) sedikit ke dalam, kesan formal/undangan cetak lama. */
+.g-card--vintage {
+  background: var(--ov-card-bg, var(--t-paper, #fff));
+  border: 1.5px solid var(--t-accent, #555);
+  outline: 3px double var(--t-accent, #555);
+  outline-offset: -7px;
+  box-shadow: var(--ov-card-shadow, 0 18px 40px -22px rgba(0, 0, 0, 0.3));
+}
+
+/* LINE (Garis Minimalis) — cuma garis tipis satu warna, TANPA isi solid,
+   tanpa shadow sama sekali -- paling bersih/minimalis dari semua gaya. */
+.g-card--line {
+  background: color-mix(in srgb, var(--ov-card-bg, var(--t-paper, #fff)) 40%, transparent);
+  border: 1px solid var(--t-ink, #333);
+  box-shadow: none;
+}
+
+/* ROYAL — border gradasi emas tipis (foil) + emboss ringan (highlight tipis
+   di atas + shadow lembut di bawah, simulasi permukaan timbul). Mewah. */
+.g-card--royal {
+  background-image:
+    linear-gradient(var(--ov-card-bg, var(--t-paper, #fff)), var(--ov-card-bg, var(--t-paper, #fff))),
+    linear-gradient(135deg, #d4af6a, #f6e6bd, #b8873b);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  border: 2px solid transparent;
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.6) inset,
+    var(--ov-card-shadow, 0 18px 40px -22px rgba(0, 0, 0, 0.3));
+}
 </style>

@@ -1,6 +1,21 @@
 import { computed } from 'vue';
 
 /**
+ * KATEGORI FONT GLOBAL (v6) -- elemen per-key (eyebrow/label/nama acara/dst)
+ * TIDAK LAGI simpan nama font bebas sendiri, cuma "nunut" ke salah satu dari
+ * 4 kategori global (lihat ThemeOptionsSchema::FONT_CATEGORIES di backend,
+ * SUMBER KEBENARAN tunggal). Value elemen = key kategori, dipetakan ke CSS
+ * var kategori itu di sini -- dipakai sectionFontVars() di bawah + elVars()
+ * Cover.vue mildness & senja (hero.elements).
+ */
+export const FONT_CATEGORY_VAR = {
+  heading: '--t-font-head',
+  body:    '--t-font-body',
+  script:  '--t-font-script',
+  accent:  '--t-font-accent',
+};
+
+/**
  * Parse theme_options (merge default_options tema DB + override undangan,
  * dilakukan backend) menjadi cssVars/can/labels/sectionOrder/cover.
  *
@@ -27,6 +42,10 @@ export function useThemeOptions(invitationRef, featuresRef, tokensRef) {
       '--t-font-head':   `'${f.heading ?? tf.heading ?? 'Cormorant Garamond'}', serif`,
       '--t-font-body':   `'${f.body ?? tf.body ?? 'Jost'}', sans-serif`,
       '--t-font-script': `'${f.script ?? tf.script ?? 'Great Vibes'}', cursive`,
+      /* AKSEN (v6) -- khusus label kecil kapital (eyebrow/label/caption/credit).
+         Kosong -> ikut Font Teks Isi (bukan default terpisah), supaya tema lama
+         yang belum pernah isi field ini tetap tampil sama seperti sebelumnya. */
+      '--t-font-accent': `'${f.accent ?? tf.accent ?? f.body ?? tf.body ?? 'Jost'}', sans-serif`,
     };
 
     /* TIPOGRAFI (judul & isi) dari Filament — channel --ov-* juga, dikonsumsi
@@ -167,11 +186,14 @@ export function useThemeOptions(invitationRef, featuresRef, tokensRef) {
   /**
    * FLORAL 4 SUDUT — dipilih bebas per posisi dari Pustaka Aset:
    * florals.tl (atas-kiri), tr (atas-kanan), bl (bawah-kiri), br (bawah-kanan).
-   * Kosong semua -> tema pakai floral SVG bawaannya sendiri.
+   * Kosong semua -> tema pakai floral SVG bawaannya sendiri (default). Beda
+   * dari "kosong" (=ikut default): florals.disabled (v6) = admin SENGAJA
+   * matikan floral sepenuhnya, TIDAK jatuh ke default juga -- lihat toggle
+   * "Nonaktifkan floral" di InvitationLookResource/ThemeResource.
    */
   const florals = computed(() => {
     const f = opts.value.florals ?? {};
-    return { tl: f.tl ?? null, tr: f.tr ?? null, bl: f.bl ?? null, br: f.br ?? null };
+    return { tl: f.tl ?? null, tr: f.tr ?? null, bl: f.bl ?? null, br: f.br ?? null, disabled: !!f.disabled };
   });
 
   /**
@@ -245,12 +267,12 @@ export function useThemeOptions(invitationRef, featuresRef, tokensRef) {
     for (const [elKey, el] of Object.entries(els)) {
       if (!el) continue;
       if (elKey === 'title') {
-        if (el.font)  vars['--t-font-head']    = `'${el.font}', serif`;
+        if (FONT_CATEGORY_VAR[el.font]) vars['--t-font-head'] = `var(${FONT_CATEGORY_VAR[el.font]})`;
         if (el.size)  vars['--ov-title-size']  = `${el.size}px`;
         if (el.color) vars['--ov-title-color'] = el.color;
         continue;
       }
-      if (el.font)  vars[`--el-${elKey}-font`]  = `'${el.font}', sans-serif`;
+      if (FONT_CATEGORY_VAR[el.font]) vars[`--el-${elKey}-font`] = `var(${FONT_CATEGORY_VAR[el.font]})`;
       if (el.size)  vars[`--el-${elKey}-size`]  = `${el.size}px`;
       if (el.color) vars[`--el-${elKey}-color`] = el.color;
     }
@@ -293,8 +315,8 @@ export function useThemeOptions(invitationRef, featuresRef, tokensRef) {
   const hero = computed(() => {
     const h = opts.value.hero ?? {};
     return {
-      style:            h.style ?? 'classic',              // classic|framed|split|minimal|custom
-      elements:         h.elements ?? {},                 // mode 'custom': { [key]: { order, align } }
+      style:            h.style ?? 'classic',              // classic|framed|split|minimal|arch|monogram|polaroid|poster
+      elements:         h.elements ?? {},                 // { [key]: { font, size, color } } -- font kini key kategori (lihat FONT_CATEGORY_VAR)
       // Kompat data lama: field "Font nama pasangan di hero" sudah dihapus dari
       // form (digantikan elements.names.font), tapi undangan lama yang cuma
       // sempat isi field lama ini tetap harus tampil fontnya.

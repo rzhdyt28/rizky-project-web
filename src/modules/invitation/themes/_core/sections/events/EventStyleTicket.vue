@@ -19,7 +19,7 @@ const timeShort = (d) => new Date(d).toLocaleTimeString('id-ID',
     <article v-for="ev in events" :key="ev.id" class="text-center c-event__ticket">
       <div class="c-event__ticket-notch c-event__ticket-notch--l" aria-hidden="true" />
       <div class="c-event__ticket-notch c-event__ticket-notch--r" aria-hidden="true" />
-      <h4 class="text-lg" :style="{ fontFamily: 'var(--t-font-head)', color: 'var(--el-name-color, var(--t-accent))', fontSize: 'var(--el-name-size, 1.125rem)' }">{{ ev.title }}</h4>
+      <h4 class="text-lg" :style="{ fontFamily: 'var(--el-name-font, var(--t-font-head))', color: 'var(--el-name-color, var(--t-accent))', fontSize: 'var(--el-name-size, 1.125rem)' }">{{ ev.title }}</h4>
       <span class="c-event__ticket-rule" aria-hidden="true" />
       <p class="text-sm capitalize" :style="{ color: 'var(--el-date-color)', fontSize: 'var(--el-date-size)' }">{{ dateLong(ev.starts_at) }}</p>
       <p class="text-sm" :style="{ color: 'var(--el-date-color)', fontSize: 'var(--el-date-size)' }">

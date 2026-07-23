@@ -196,6 +196,7 @@
    hero.elements.$key.size/color (lihat Cover.vue senja: elVars), sama pola
    dengan Mildness. Fallback ke nilai bawaan Senja kalau admin belum isi. */
 .theme-senja .senja-hero__eyebrow {
+  font-family: var(--hero-el-eyebrow-font, var(--t-font-accent));
   font-size: var(--hero-el-eyebrow-size, 0.78rem);
   color: var(--hero-el-eyebrow-color, inherit);
   letter-spacing: 0.16em;
@@ -415,6 +416,7 @@
 .theme-senja .senja-hero--left .senja-hero__dresscode { justify-items: flex-start; }
 .theme-senja .senja-hero__dresscode small {
   font-size: var(--hero-el-dresscode-size, 10px);
+  font-family: var(--t-font-accent);
   letter-spacing: 0.35em;
   text-transform: uppercase;
   color: var(--hero-el-dresscode-color, var(--t-gold));

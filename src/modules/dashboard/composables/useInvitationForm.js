@@ -76,7 +76,7 @@ export function blankForm() {
       co_host: { style: 'classic' },
       florals: { tl: '', tr: '', bl: '', br: '' },
       animation: { preset: 'fade-up' },
-      fonts: { heading: '', body: '', script: '', css_url: '' },
+      fonts: { heading: '', body: '', script: '', accent: '', css_url: '' },
       card: { style: '', bg: '', opacity: '', shadow_color: '', shadow_size: '', radius_tl: '', radius_tr: '', radius_bl: '', radius_br: '' },
       colors: { accent: '', paper: '', ink: '' },
       sections,
@@ -117,8 +117,17 @@ export function useInvitationForm() {
     form.video_url = inv.video_url ?? ''; form.music_url = inv.music_url ?? '';
     form.rsvp_enabled = inv.rsvp_enabled ?? true; form.guestbook_enabled = inv.guestbook_enabled ?? true;
     form.co_hosts = Array.isArray(inv.co_hosts) ? inv.co_hosts.map((c) => ({ ...c })) : [];
-    deepMerge(form.theme_options, inv.theme_options);
+    // CATATAN (v4+): Invitation.theme_options TIDAK dipakai lagi di sini --
+    // kolom itu tidak dibaca render publik (lihat PublicInvitationController).
+    // Pengaturan visual diisi TERPISAH lewat applyLook() dari default_options
+    // child theme (GET /api/invitation/{id}/look), dipanggil dari EditUndangan.vue.
   }
 
-  return { form, applyInvitation };
+  /** Isi form.theme_options dari default_options CHILD THEME (GET .../look). */
+  function applyLook(defaultOptions) {
+    Object.assign(form.theme_options, blankForm().theme_options);
+    deepMerge(form.theme_options, defaultOptions);
+  }
+
+  return { form, applyInvitation, applyLook };
 }

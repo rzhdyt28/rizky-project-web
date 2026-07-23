@@ -98,17 +98,32 @@
 }
 @media (max-height: 720px) {
   .theme-mildness .m-hero-screen .mild-cover,
-  .theme-mildness .m-hero-screen .mild-arch,
-  .theme-mildness .m-hero-screen .mild-monogram,
-  .theme-mildness .m-hero-screen .mild-polaroid {
+  .theme-mildness .m-hero-screen .mild-monogram {
     gap: 0.5rem !important;
   }
   .theme-mildness .m-hero-screen .mild-cover__framed,
-  .theme-mildness .m-hero-screen .mild-cover__split,
-  .theme-mildness .m-hero-screen .mild-arch,
-  .theme-mildness .m-hero-screen .mild-polaroid {
+  .theme-mildness .m-hero-screen .mild-cover__split {
     height: 5.5rem !important;
     max-height: 20vh;
+  }
+  /* mild-arch & mild-polaroid TIDAK dipaksa height fix (beda dari framed/split
+     di atas) -- keduanya berukuran lewat WIDTH + aspect-ratio pada foto di
+     dalamnya (lihat HeroStyleArch.vue/HeroStylePolaroid.vue), jadi memaksa
+     height kecil di sini bikin proporsinya bentrok: foto arch jadi terpotong
+     aneh (overflow:hidden), foto polaroid malah bikin layout tumpang-tindih
+     dengan elemen teks di bawahnya (tinggi konten > 5.5rem yang dipaksakan).
+     Perbaikan: kecilkan lewat WIDTH saja, tinggi ikut menyusut proporsional
+     otomatis lewat aspect-ratio. */
+  .theme-mildness .m-hero-screen .mild-arch,
+  .theme-mildness .m-hero-screen .mild-polaroid {
+    gap: 0.35rem !important;
+    width: min(46vw, 8.5rem) !important;
+  }
+  /* .mild-arch (beda dari polaroid) set width DAN height terpisah di scoped
+     style-nya sendiri (bukan aspect-ratio pada <img>) -- height ikut
+     dikecilkan proporsional di sini supaya tidak gepeng/stretch. */
+  .theme-mildness .m-hero-screen .mild-arch {
+    height: min(56vw, 10.5rem) !important;
   }
 }
 @media (max-height: 600px) {

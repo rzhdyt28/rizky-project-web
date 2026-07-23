@@ -105,7 +105,7 @@ const usesGridPager = computed(() => ['grid', 'masonry', 'polaroid', 'circles', 
     <p
       v-if="caption"
       class="max-w-md mx-auto mb-5 -mt-4 text-sm italic c-gallery__caption"
-      :style="{ color: 'var(--el-caption-color)', fontSize: 'var(--el-caption-size)' }"
+      :style="{ fontFamily: 'var(--el-caption-font, var(--t-font-body))', color: 'var(--el-caption-color)', fontSize: 'var(--el-caption-size)' }"
     >{{ caption }}</p>
     <component
       :is="activeStyle"

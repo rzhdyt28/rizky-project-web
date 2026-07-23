@@ -51,8 +51,8 @@ defineProps({
   border: 1px solid color-mix(in srgb, var(--t-gold, #b08d4a) 55%, transparent);
   background: color-mix(in srgb, var(--t-gold, #b08d4a) 8%, transparent);
 }
-.c-cohost__special-label { color: var(--el-label-color, var(--t-gold, #b08d4a)); font-size: var(--el-label-size); }
-.c-cohost__special-name  { font-family: var(--t-font-head, serif); font-size: var(--el-name-size, 1.05rem); color: var(--el-name-color, var(--t-accent)); }
-.c-cohost__side { color: var(--el-label-color, var(--t-gold, #b08d4a)); font-size: var(--el-label-size); }
-.c-cohost__name { font-family: var(--t-font-head, serif); font-size: var(--el-name-size, 1rem); color: var(--el-name-color); }
+.c-cohost__special-label { font-family: var(--el-label-font, var(--t-font-accent)); color: var(--el-label-color, var(--t-gold, #b08d4a)); font-size: var(--el-label-size); }
+.c-cohost__special-name  { font-family: var(--el-name-font, var(--t-font-head, serif)); font-size: var(--el-name-size, 1.05rem); color: var(--el-name-color, var(--t-accent)); }
+.c-cohost__side { font-family: var(--el-label-font, var(--t-font-accent)); color: var(--el-label-color, var(--t-gold, #b08d4a)); font-size: var(--el-label-size); }
+.c-cohost__name { font-family: var(--el-name-font, var(--t-font-head, serif)); font-size: var(--el-name-size, 1rem); color: var(--el-name-color); }
 </style>

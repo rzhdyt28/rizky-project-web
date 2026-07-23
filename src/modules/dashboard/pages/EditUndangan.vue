@@ -38,12 +38,21 @@ import GlobalTypographySectionFields from '../components/edit-sections/GlobalTyp
 const { invitation, isLoading, isError, error } = useActiveInvitation();
 const { data: themes } = useThemes();
 
-const { form, applyInvitation } = useInvitationForm();
+const { form, applyInvitation, applyLook } = useInvitationForm();
 const saving = ref(false);
 const saveOk = ref(false);
 const saveErr = ref('');
 
 watch(invitation, applyInvitation, { immediate: true });
+
+// Pengaturan visual (warna, font, gaya kartu, layout hero, dst) hidup di
+// default_options CHILD THEME, TERPISAH dari data utama undangan -- lihat
+// InvitationController::look() di backend. Dimuat begitu invitation.id ada.
+watch(invitation, async (inv) => {
+  if (!inv) return;
+  const { data } = await api.get(`/api/invitation/${inv.id}/look`);
+  applyLook(data.default_options);
+}, { immediate: true });
 
 /* ===== upload helpers (langsung upload saat file dipilih, simpan path) ===== */
 const uploading = reactive({});
@@ -67,7 +76,14 @@ async function handleSlideshowUpload(e) {
 async function submit() {
   saving.value = true; saveOk.value = false; saveErr.value = '';
   try {
-    await api.put(`/api/invitation/${invitation.value.id}`, { ...form });
+    // Data utama (slug, nama, tema, dst) & tampilan visual (default_options
+    // child theme) hidup di 2 resource BEDA di backend -- lihat catatan di
+    // InvitationController::look()/updateLook(). Disimpan sebagai 2 request.
+    const { theme_options, ...invitationData } = form;
+    await Promise.all([
+      api.put(`/api/invitation/${invitation.value.id}`, invitationData),
+      api.put(`/api/invitation/${invitation.value.id}/look`, { default_options: theme_options }),
+    ]);
     saveOk.value = true;
     setTimeout(() => { saveOk.value = false; }, 2500);
   } catch (e) {

@@ -102,10 +102,12 @@ const ctx = computed(() => ({
   countdown:  props.countdown,
 }));
 
-/* Sudut yang aktif: hanya yang dipilih adminnya. Kosong semua -> default SVG. */
+/* Sudut yang aktif: hanya yang dipilih adminnya. Kosong semua -> default SVG
+   (KECUALI florals.disabled -- itu opt-out eksplisit, tidak jatuh ke default). */
 const activeCorners = computed(() =>
-  ['tl', 'tr', 'bl', 'br'].filter((c) => props.florals?.[c])
+  props.florals?.disabled ? [] : ['tl', 'tr', 'bl', 'br'].filter((c) => props.florals?.[c])
 );
+const floralDefaultVisible = computed(() => !props.florals?.disabled && !activeCorners.value.length);
 
 /* Style background per-section (hanya mode tanpa kartu). */
 function screenStyle(key) {
@@ -185,7 +187,7 @@ const heroCardPhotoUrl = computed(() => {
       <template v-if="activeCorners.length">
         <FloralCorner v-for="c in activeCorners" :key="c" :corner="c" :image="florals[c]" />
       </template>
-      <template v-else>
+      <template v-else-if="floralDefaultVisible">
         <FloralCorner corner="tl" />
         <FloralCorner corner="br" />
       </template>

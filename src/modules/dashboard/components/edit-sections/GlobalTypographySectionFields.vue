@@ -1,6 +1,6 @@
 <script setup>
 /** Global — Tipografi, Musik Latar, Override Warna. */
-import { HEADING_FONTS, BODY_FONTS, SCRIPT_FONTS } from '../../composables/invitationFormOptions';
+import { HEADING_FONTS, BODY_FONTS, SCRIPT_FONTS, ACCENT_FONTS } from '../../composables/invitationFormOptions';
 
 defineProps({
   form: { type: Object, required: true },
@@ -15,15 +15,14 @@ defineProps({
     <datalist id="heading-fonts"><option v-for="f in HEADING_FONTS" :key="f" :value="f" /></datalist>
     <datalist id="body-fonts"><option v-for="f in BODY_FONTS" :key="f" :value="f" /></datalist>
     <datalist id="script-fonts"><option v-for="f in SCRIPT_FONTS" :key="f" :value="f" /></datalist>
-    <datalist id="element-fonts">
-      <option v-for="f in [...HEADING_FONTS, ...SCRIPT_FONTS, ...BODY_FONTS]" :key="f" :value="f" />
-    </datalist>
-    <p class="mt-1 text-[11px] opacity-60">Ukuran &amp; warna diatur per-section lewat "Tipografi, Ukuran &amp; Warna tiap elemen teks section" di tiap section.</p>
-    <div class="mt-3 grid gap-2 sm:grid-cols-3">
+    <datalist id="accent-fonts"><option v-for="f in ACCENT_FONTS" :key="f" :value="f" /></datalist>
+    <p class="mt-1 text-[11px] opacity-60">Font per-elemen (tiap section, tiap elemen hero) sekarang pilih salah satu dari 4 font di atas lewat dropdown, bukan isi bebas -- supaya selalu selaras dengan perubahan di sini.</p>
+    <div class="mt-3 grid gap-2 sm:grid-cols-2">
       <input v-model="form.theme_options.fonts.heading" list="heading-fonts" class="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800" placeholder="Font judul" />
       <input v-model="form.theme_options.fonts.body" list="body-fonts" class="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800" placeholder="Font isi" />
       <input v-model="form.theme_options.fonts.script" list="script-fonts" class="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800" placeholder="Font kaligrafi" />
-      <input v-model="form.theme_options.fonts.css_url" type="url" class="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800 sm:col-span-3" placeholder="URL CSS font (opsional)" />
+      <input v-model="form.theme_options.fonts.accent" list="accent-fonts" class="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800" placeholder="Font aksen (label kecil)" />
+      <input v-model="form.theme_options.fonts.css_url" type="url" class="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800 sm:col-span-2" placeholder="URL CSS font (opsional)" />
     </div>
   </details>
 

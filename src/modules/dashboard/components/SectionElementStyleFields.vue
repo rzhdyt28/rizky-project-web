@@ -7,9 +7,13 @@
  * theme_options.sections.{key}.elements (dimutasi langsung), `list` = array
  * [[elKey, label], ...] elemen yang relevan untuk section ini. Key 'title'
  * KHUSUS mengatur judul section itu sendiri. 3 field per elemen: font/ukuran/
- * warna -- font ditulis bebas (nama Google Fonts), font-nya dimuat otomatis
- * (lihat InvitationPublic.vue collectElementFonts()).
+ * warna -- font (v6) BUKAN nama bebas lagi, cuma referensi ke salah satu 4
+ * kategori font global (lihat ThemeOptionsSchema::FONT_CATEGORIES di backend
+ * & GlobalTypographySectionFields.vue), supaya ganti 1 font global otomatis
+ * konsisten ke semua elemen yang memakainya.
  */
+import { FONT_CATEGORIES } from '../composables/invitationFormOptions';
+
 defineProps({
   elements: { type: Object, required: true },
   list: { type: Array, required: true }, // [[elKey, label], ...]
@@ -21,12 +25,13 @@ defineProps({
     <p class="text-xs font-medium opacity-70">Tipografi, Ukuran &amp; Warna tiap elemen teks section</p>
     <div v-for="[elKey, label] in list" :key="elKey" class="grid grid-cols-2 items-center gap-2 sm:grid-cols-4">
       <span class="text-xs opacity-70">{{ label }}</span>
-      <input
+      <select
         v-model="elements[elKey].font"
-        list="element-fonts"
-        placeholder="Font (bawaan)"
         class="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-800"
-      />
+      >
+        <option value="">Bawaan (ikut gaya elemen)</option>
+        <option v-for="(label, key) in FONT_CATEGORIES" :key="key" :value="key">{{ label }}</option>
+      </select>
       <input
         v-model.number="elements[elKey].size"
         type="number"

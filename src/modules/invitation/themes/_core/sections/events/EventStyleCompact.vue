@@ -22,7 +22,7 @@ const timeShort = (d) => new Date(d).toLocaleTimeString('id-ID',
       </div>
       <span class="c-event__compact-sep" aria-hidden="true" />
       <div class="flex-1 text-left">
-        <h4 class="text-base" :style="{ fontFamily: 'var(--t-font-head)', color: 'var(--el-name-color, var(--t-accent))', fontSize: 'var(--el-name-size, 1rem)' }">{{ ev.title }}</h4>
+        <h4 class="text-base" :style="{ fontFamily: 'var(--el-name-font, var(--t-font-head))', color: 'var(--el-name-color, var(--t-accent))', fontSize: 'var(--el-name-size, 1rem)' }">{{ ev.title }}</h4>
         <p class="text-xs" :style="{ color: 'var(--el-venue-color)', fontSize: 'var(--el-venue-size)' }">
           {{ timeShort(ev.starts_at) }}<span v-if="ev.ends_at"> – {{ timeShort(ev.ends_at) }}</span> WIB &middot; {{ ev.venue_name }}
         </p>

@@ -48,9 +48,9 @@ const quoteText = computed(() =>
 /* --hero-el-countdown_label-* menang kalau countdown ini tertanam di dalam
    hero (lihat Cover.vue mildness) -- fallback ke --el-eyebrow (countdown
    berdiri sendiri) lalu default tema. */
-.c-countdown__eyebrow { font-family: var(--hero-el-countdown_label-font, var(--el-eyebrow-font, inherit)); color: var(--hero-el-countdown_label-color, var(--el-eyebrow-color, var(--t-gold, #b08d4a))); font-size: var(--hero-el-countdown_label-size, var(--el-eyebrow-size, 10px)); }
+.c-countdown__eyebrow { font-family: var(--hero-el-countdown_label-font, var(--el-eyebrow-font, var(--t-font-accent))); color: var(--hero-el-countdown_label-color, var(--el-eyebrow-color, var(--t-gold, #b08d4a))); font-size: var(--hero-el-countdown_label-size, var(--el-eyebrow-size, 10px)); }
 .c-countdown__date    { font-family: var(--el-date-font, var(--t-font-head, serif)); color: var(--el-date-color, var(--t-accent)); font-size: var(--el-date-size, 1.25rem); }
-.c-countdown__quote   { font-family: var(--el-quote-font, inherit); color: var(--el-quote-color, var(--t-ink)); opacity: 0.85; font-size: var(--el-quote-size, 0.9rem); }
+.c-countdown__quote   { font-family: var(--el-quote-font, var(--t-font-body)); color: var(--el-quote-color, var(--t-ink)); opacity: 0.85; font-size: var(--el-quote-size, 0.9rem); }
 
 .c-countdown__box {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -58,5 +58,5 @@ const quoteText = computed(() =>
   background: color-mix(in srgb, var(--t-accent) 8%, transparent);
 }
 .c-countdown__num   { font-family: var(--t-font-head, serif); color: var(--t-accent); font-size: 1.5rem; line-height: 1.1; }
-.c-countdown__label { font-size: var(--el-label-size, 9px); text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.7; color: var(--el-label-color, var(--t-ink)); }
+.c-countdown__label { font-family: var(--el-label-font, var(--t-font-accent)); font-size: var(--el-label-size, 9px); text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.7; color: var(--el-label-color, var(--t-ink)); }
 </style>

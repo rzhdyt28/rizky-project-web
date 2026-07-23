@@ -21,7 +21,7 @@ const timeShort = (d) => new Date(d).toLocaleTimeString('id-ID',
       class="p-5 border c-panel bg-white/60"
       :style="{ borderColor: 'color-mix(in srgb, var(--t-accent) 25%, transparent)' }"
     >
-      <h4 class="text-xl" :style="{ fontFamily: 'var(--t-font-head)', color: 'var(--el-name-color, var(--t-accent))', fontSize: 'var(--el-name-size, 1.25rem)' }">{{ ev.title }}</h4>
+      <h4 class="text-xl" :style="{ fontFamily: 'var(--el-name-font, var(--t-font-head))', color: 'var(--el-name-color, var(--t-accent))', fontSize: 'var(--el-name-size, 1.25rem)' }">{{ ev.title }}</h4>
       <p class="text-sm" :style="{ color: 'var(--el-date-color)', fontSize: 'var(--el-date-size)' }">{{ dateLong(ev.starts_at) }}</p>
       <p class="text-sm" :style="{ color: 'var(--el-date-color)', fontSize: 'var(--el-date-size)' }">
         Pukul {{ timeShort(ev.starts_at) }}<span v-if="ev.ends_at"> – {{ timeShort(ev.ends_at) }}</span> WIB

@@ -12,7 +12,7 @@ defineProps({
 
 <template>
   <div class="max-w-md mx-auto text-center c-video__framed">
-    <p class="mb-3 uppercase tracking-[0.35em]" :style="{ color: 'var(--el-eyebrow-color, var(--t-gold))', fontSize: 'var(--el-eyebrow-size, 10px)' }">{{ eyebrow }}</p>
+    <p class="mb-3 uppercase tracking-[0.35em]" :style="{ fontFamily: 'var(--el-eyebrow-font, var(--t-font-accent))', color: 'var(--el-eyebrow-color, var(--t-gold))', fontSize: 'var(--el-eyebrow-size, 10px)' }">{{ eyebrow }}</p>
     <div class="overflow-hidden aspect-video rounded-2xl c-video__framed-box">
       <video v-if="isLocalFile" :src="embedSrc" controls playsinline class="object-cover w-full h-full rounded-xl" />
       <iframe
@@ -25,8 +25,8 @@ defineProps({
         loading="lazy"
       />
     </div>
-    <p class="mt-4 italic c-video__caption opacity-90" :style="{ color: 'var(--el-caption-color)', fontSize: 'var(--el-caption-size, 0.875rem)' }">{{ caption }}</p>
-    <p class="mt-2 tracking-[0.2em] uppercase opacity-70" :style="{ color: 'var(--el-credit-color)', fontSize: 'var(--el-credit-size, 0.75rem)' }">
+    <p class="mt-4 italic c-video__caption opacity-90" :style="{ fontFamily: 'var(--el-caption-font, var(--t-font-body))', color: 'var(--el-caption-color)', fontSize: 'var(--el-caption-size, 0.875rem)' }">{{ caption }}</p>
+    <p class="mt-2 tracking-[0.2em] uppercase opacity-70" :style="{ fontFamily: 'var(--el-credit-font, var(--t-font-accent))', color: 'var(--el-credit-color)', fontSize: 'var(--el-credit-size, 0.75rem)' }">
       {{ invitation.bride_name }} &amp; {{ invitation.groom_name }}
       <template v-if="creditDate"> · {{ creditDate }}</template>
     </p>

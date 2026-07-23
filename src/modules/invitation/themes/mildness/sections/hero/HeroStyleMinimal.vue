@@ -54,6 +54,7 @@ defineEmits(['open']);
 }
 .mild-dresscode__label {
   font-size: 10px;
+  font-family: var(--t-font-accent);
   letter-spacing: 0.35em;
   text-transform: uppercase;
   color: var(--hero-el-dresscode-color, var(--t-gold));

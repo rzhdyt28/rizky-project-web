@@ -26,7 +26,7 @@ const initials = computed(() => {
 <template>
   <div class="relative flex flex-col items-center w-full gap-4 px-6 py-14 text-center mild-cover">
     <div class="mild-monogram" :style="{ color: 'var(--hero-el-names-color, var(--t-accent))' }">{{ initials }}</div>
-    <p class="text-xs tracking-[0.15em]" :style="{ color: 'var(--hero-el-eyebrow-color, var(--t-ink))', fontSize: 'var(--hero-el-eyebrow-size, 0.75rem)', opacity: 0.75 }">Undangan Pernikahan</p>
+    <p class="text-xs tracking-[0.15em]" :style="{ fontFamily: 'var(--hero-el-eyebrow-font, var(--t-font-accent))', color: 'var(--hero-el-eyebrow-color, var(--t-ink))', fontSize: 'var(--hero-el-eyebrow-size, 0.75rem)', opacity: 0.75 }">Undangan Pernikahan</p>
     <h1 class="leading-tight" :style="{ fontFamily: 'var(--hero-name-font, var(--t-font-script))', color: 'var(--hero-el-names-color, var(--t-accent))', fontSize: 'var(--hero-el-names-size, 1.5rem)' }">
       {{ invitation.bride_name }} &amp; {{ invitation.groom_name }}
     </h1>
@@ -68,7 +68,7 @@ const initials = computed(() => {
   letter-spacing: 0.05em;
 }
 .mild-dresscode { display: grid; gap: 0.15rem; justify-items: center; }
-.mild-dresscode__label { letter-spacing: 0.35em; text-transform: uppercase; color: var(--hero-el-dresscode-color, var(--t-gold)); }
+.mild-dresscode__label { letter-spacing: 0.35em; text-transform: uppercase; font-family: var(--t-font-accent); color: var(--hero-el-dresscode-color, var(--t-gold)); }
 .mild-dresscode__text { font-style: italic; font-family: var(--t-font-head); }
 @keyframes mildFade {
   from { opacity: 0; transform: translateY(14px); }

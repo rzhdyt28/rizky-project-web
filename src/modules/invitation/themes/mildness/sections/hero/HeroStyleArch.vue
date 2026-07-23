@@ -23,7 +23,7 @@ defineEmits(['open']);
     <div v-if="heroPhoto" class="mild-arch">
       <img :src="assetUrl(heroPhoto)" :alt="`${invitation.bride_name} & ${invitation.groom_name}`" loading="lazy" class="object-cover w-full h-full" />
     </div>
-    <p class="text-xs tracking-[0.15em]" :style="{ color: 'var(--hero-el-eyebrow-color, var(--t-ink))', fontSize: 'var(--hero-el-eyebrow-size, 0.75rem)', opacity: 0.75 }">Undangan Pernikahan</p>
+    <p class="text-xs tracking-[0.15em]" :style="{ fontFamily: 'var(--hero-el-eyebrow-font, var(--t-font-accent))', color: 'var(--hero-el-eyebrow-color, var(--t-ink))', fontSize: 'var(--hero-el-eyebrow-size, 0.75rem)', opacity: 0.75 }">Undangan Pernikahan</p>
     <h1 class="leading-tight" :style="{ fontFamily: 'var(--hero-name-font, var(--t-font-script))', color: 'var(--hero-el-names-color, var(--t-accent))', fontSize: 'var(--hero-el-names-size, clamp(1.875rem, 4.5vw, 2.5rem))' }">
       {{ invitation.bride_name }} &amp; {{ invitation.groom_name }}
     </h1>
@@ -61,7 +61,7 @@ defineEmits(['open']);
   box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.4);
 }
 .mild-dresscode { display: grid; gap: 0.15rem; justify-items: center; }
-.mild-dresscode__label { letter-spacing: 0.35em; text-transform: uppercase; color: var(--hero-el-dresscode-color, var(--t-gold)); }
+.mild-dresscode__label { letter-spacing: 0.35em; text-transform: uppercase; font-family: var(--t-font-accent); color: var(--hero-el-dresscode-color, var(--t-gold)); }
 .mild-dresscode__text { font-style: italic; font-family: var(--t-font-head); }
 @keyframes mildFade {
   from { opacity: 0; transform: translateY(14px); }

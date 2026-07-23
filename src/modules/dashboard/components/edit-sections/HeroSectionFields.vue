@@ -3,7 +3,7 @@
  * useInvitationForm, dimutasi langsung (sama seperti pola SectionDisplayFields).
  * Background foto/slideshow/video PINDAH ke Global (lihat GlobalStyleSectionFields.vue) --
  * bersifat halaman penuh, bukan cuma hero. */
-import { CARD_STYLES } from '../../composables/invitationFormOptions';
+import { CARD_STYLES, FONT_CATEGORIES } from '../../composables/invitationFormOptions';
 import SectionDisplayFields from '../SectionDisplayFields.vue';
 
 defineProps({
@@ -11,17 +11,6 @@ defineProps({
   invitationId: { type: [Number, String], required: true },
   handleUpload: { type: Function, required: true },
 });
-
-const HERO_ELEMENTS = [
-  ['eyebrow', 'Label "Undangan Pernikahan"'],
-  ['photo', 'Foto berbingkai (upload di bawah)'],
-  ['names', 'Nama pasangan'],
-  ['date', 'Tanggal acara'],
-  ['countdown', 'Countdown'],
-  ['dresscode', 'Dress code'],
-  ['guest', 'Kepada (nama tamu)'],
-  ['button', 'Tombol "Buka Undangan"'],
-];
 
 /* Elemen teks yang punya font+ukuran+warna sendiri (semua KECUALI photo/countdown -- tidak punya teks). */
 const HERO_TEXT_ELEMENTS = [
@@ -49,31 +38,17 @@ const HERO_TEXT_ELEMENTS = [
           <option value="arch">5. Arch — foto besar berbingkai lengkung</option>
           <option value="monogram">6. Monogram — inisial besar, sangat minimalis</option>
           <option value="polaroid">7. Polaroid — foto gaya polaroid miring</option>
-          <option value="custom">8. Custom — atur urutan &amp; rata tiap elemen sendiri</option>
+          <option value="poster">8. Poster — foto latar penuh, nama besar di bawah, dramatis</option>
         </select>
-        <p class="mt-1 text-xs opacity-60">Model Framed/Split/Custom/Arch/Polaroid memakai "Foto Berbingkai" di bawah -- WAJIB diisi, kalau tidak foto tidak akan tampil (field ini TERPISAH dari background halaman di Global).</p>
+        <p class="mt-1 text-xs opacity-60">Model Framed/Split/Arch/Polaroid/Poster memakai "Foto Berbingkai" di bawah -- WAJIB diisi, kalau tidak foto tidak akan tampil (field ini TERPISAH dari background halaman di Global).</p>
       </div>
       <div
-        v-if="['framed', 'split', 'custom', 'arch', 'polaroid'].includes(form.theme_options.hero.style)"
+        v-if="['framed', 'split', 'arch', 'polaroid', 'poster'].includes(form.theme_options.hero.style)"
         class="sm:col-span-2"
       >
         <label class="mb-1 block text-xs opacity-70">Foto Berbingkai Hero</label>
         <input type="file" accept="image/*" class="text-sm" @change="handleUpload($event, 'covers', (p) => form.theme_options.hero.framed_photo = p)" />
         <p class="mt-1 text-[11px] opacity-60">Khusus foto berbingkai hero -- terpisah dari background halaman.</p>
-      </div>
-      <div v-if="form.theme_options.hero.style === 'custom'" class="grid gap-2 rounded-xl border border-dashed border-slate-200 p-3 dark:border-slate-700 sm:col-span-2">
-        <p class="text-xs font-medium opacity-70">Atur bebas tiap elemen</p>
-        <div v-for="[key, label] in HERO_ELEMENTS" :key="key" class="grid grid-cols-2 items-center gap-2">
-          <span class="text-xs opacity-70">{{ label }}</span>
-          <div class="grid grid-cols-2 gap-2">
-            <select v-model="form.theme_options.hero.elements[key].align" class="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-800">
-              <option value="">Tengah</option>
-              <option value="left">Kiri</option>
-              <option value="right">Kanan</option>
-            </select>
-            <input v-model.number="form.theme_options.hero.elements[key].order" type="number" min="1" max="8" class="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-800" placeholder="Urutan" />
-          </div>
-        </div>
       </div>
       <label class="flex items-center gap-2 text-sm">
         <input v-model="form.theme_options.sections.countdown_hero.visible" type="checkbox" /> Countdown di hero
@@ -88,7 +63,10 @@ const HERO_TEXT_ELEMENTS = [
       <p class="text-xs font-medium opacity-70">Tipografi, Ukuran &amp; Warna tiap elemen teks hero</p>
       <div v-for="[key, label] in HERO_TEXT_ELEMENTS" :key="key" class="grid grid-cols-2 items-center gap-2 sm:grid-cols-4">
         <span class="text-xs opacity-70">{{ label }}</span>
-        <input v-model="form.theme_options.hero.elements[key].font" list="element-fonts" placeholder="Font (bawaan)" class="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-800" />
+        <select v-model="form.theme_options.hero.elements[key].font" class="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-800">
+          <option value="">Bawaan (ikut gaya elemen)</option>
+          <option v-for="(catLabel, catKey) in FONT_CATEGORIES" :key="catKey" :value="catKey">{{ catLabel }}</option>
+        </select>
         <input v-model.number="form.theme_options.hero.elements[key].size" type="number" placeholder="Ukuran (px)" class="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-800" />
         <input v-model="form.theme_options.hero.elements[key].color" type="color" class="h-9 w-full rounded-lg border border-slate-200 dark:border-slate-700" />
       </div>

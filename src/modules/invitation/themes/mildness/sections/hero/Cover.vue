@@ -2,9 +2,10 @@
 /**
  * MILDNESS/Cover — DISPATCHER hero. State yang dipakai SEMUA gaya (heroPhoto,
  * firstEvent, weekday, dateDots, coverCd, KNOWN_HERO_STYLES+dev-warning)
- * tetap di sini, diteruskan sebagai props. Mode "custom" (urutan+rata bebas
- * per elemen) sepenuhnya mandiri di HeroStyleCustom.vue karena tidak dipakai
- * gaya lain.
+ * tetap di sini, diteruskan sebagai props. Gaya "custom" (urutan+rata bebas
+ * per elemen) SUDAH DIHAPUS (2026-07-24, HeroStyleCustom.vue dihapus) --
+ * terlalu rumit dikelola (2 sumber daftar elemen berbeda, gampang drift) dan
+ * jarang dipakai. Digantikan gaya "poster" (HeroStylePoster.vue).
  *
  * Tambah gaya baru: buat HeroStyle<Nama>.vue di folder ini, daftarkan di
  * map STYLES di bawah, tambah opsi ke ThemeOptionsSchema::HERO_STYLES
@@ -12,14 +13,15 @@
  * fallback warning.
  */
 import { computed, watchEffect } from 'vue';
+import { FONT_CATEGORY_VAR } from '../../../../composables/useThemeOptions';
 import HeroStyleClassic from './HeroStyleClassic.vue';
 import HeroStyleFramed from './HeroStyleFramed.vue';
 import HeroStyleSplit from './HeroStyleSplit.vue';
-import HeroStyleCustom from './HeroStyleCustom.vue';
 import HeroStyleMinimal from './HeroStyleMinimal.vue';
 import HeroStyleArch from './HeroStyleArch.vue';
 import HeroStyleMonogram from './HeroStyleMonogram.vue';
 import HeroStylePolaroid from './HeroStylePolaroid.vue';
+import HeroStylePoster from './HeroStylePoster.vue';
 
 const props = defineProps({
   invitation: { type: Object, required: true },
@@ -37,7 +39,7 @@ const emit = defineEmits(['open']);
 /* Harus sinkron dengan ThemeOptionsSchema::HERO_STYLES di backend
    (app/Filament/Support/ThemeOptionsSchema.php) — itu daftar resmi opsi
    yang admin bisa pilih. */
-const KNOWN_HERO_STYLES = ['classic', 'framed', 'split', 'minimal', 'arch', 'monogram', 'polaroid', 'custom'];
+const KNOWN_HERO_STYLES = ['classic', 'framed', 'split', 'minimal', 'arch', 'monogram', 'polaroid', 'poster'];
 
 const heroStyle = computed(() => props.hero?.style ?? 'classic');
 /* Foto berbingkai (Framed/Split/Arch/Polaroid/Custom): field upload KHUSUS
@@ -62,16 +64,19 @@ const elVars = computed(() => {
   for (const key of TEXT_ELEMENTS) {
     const el = els[key];
     if (!el) continue;
-    if (el.font)  vars[`--hero-el-${key}-font`]  = `'${el.font}', serif`;
+    if (FONT_CATEGORY_VAR[el.font]) vars[`--hero-el-${key}-font`] = `var(${FONT_CATEGORY_VAR[el.font]})`;
     if (el.size)  vars[`--hero-el-${key}-size`]  = `${el.size}px`;
     if (el.color) vars[`--hero-el-${key}-color`] = el.color;
   }
   // Field lama "Font nama pasangan di hero" (hero.name_font) SUDAH DIHAPUS dari
-  // form -- digantikan elements.names.font di atas. Tetap tulis ke var LAMA
-  // (--hero-name-font) supaya semua konsumen existing (tiap HeroStyle*.vue,
-  // theme.css senja) otomatis ikut tanpa perlu diganti satu-satu.
-  const nameFont = els.names?.font || props.hero?.nameFont;
-  if (nameFont) vars['--hero-name-font'] = `'${nameFont}', cursive`;
+  // form -- digantikan elements.names.font di atas (kini kategori, lihat
+  // FONT_CATEGORY_VAR). Data LAMA (hero.nameFont) tetap literal nama font
+  // bebas (bukan kategori) -- dipertahankan apa adanya untuk undangan lama.
+  if (FONT_CATEGORY_VAR[els.names?.font]) {
+    vars['--hero-name-font'] = `var(${FONT_CATEGORY_VAR[els.names.font]})`;
+  } else if (props.hero?.nameFont) {
+    vars['--hero-name-font'] = `'${props.hero.nameFont}', cursive`;
+  }
   return vars;
 });
 
@@ -109,11 +114,11 @@ const STYLES = {
   classic: HeroStyleClassic,
   framed: HeroStyleFramed,
   split: HeroStyleSplit,
-  custom: HeroStyleCustom,
   minimal: HeroStyleMinimal,
   arch: HeroStyleArch,
   monogram: HeroStyleMonogram,
   polaroid: HeroStylePolaroid,
+  poster: HeroStylePoster,
 };
 /* Style tak dikenal -> fallback ke 'minimal' (sama seperti perilaku lama). */
 const activeStyle = computed(() => STYLES[heroStyle.value] ?? HeroStyleMinimal);

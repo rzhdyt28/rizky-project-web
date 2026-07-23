@@ -54,13 +54,13 @@ const activeStyle = computed(() => STYLES[styleName.value] ?? CoupleStyleClassic
     <p
       v-if="showEyebrow"
       class="mb-2 uppercase tracking-[0.35em]"
-      :style="{ color: 'var(--el-eyebrow-color, var(--t-gold))', fontSize: 'var(--el-eyebrow-size, 10px)' }"
+      :style="{ fontFamily: 'var(--el-eyebrow-font, var(--t-font-accent))', color: 'var(--el-eyebrow-color, var(--t-gold))', fontSize: 'var(--el-eyebrow-size, 10px)' }"
     >
       {{ eyebrowText }}
     </p>
     <p
       class="max-w-md mx-auto mb-6 italic"
-      :style="{ fontFamily: 'var(--t-font-head)', color: 'var(--el-opening-color)', fontSize: 'var(--el-opening-size, 0.875rem)' }"
+      :style="{ fontFamily: 'var(--el-opening-font, var(--t-font-head))', color: 'var(--el-opening-color)', fontSize: 'var(--el-opening-size, 0.875rem)' }"
     >
       {{ invitation.opening_text || 'Dengan memohon rahmat dan ridha Allah SWT, kami bermaksud menyelenggarakan pernikahan putra-putri kami.' }}
     </p>

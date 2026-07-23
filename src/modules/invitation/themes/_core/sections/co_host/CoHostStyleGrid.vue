@@ -34,8 +34,8 @@ defineProps({
 </template>
 
 <style scoped>
-.c-cohost__special-label { color: var(--el-label-color, var(--t-gold, #b08d4a)); font-size: var(--el-label-size); }
-.c-cohost__side { color: var(--el-label-color, var(--t-gold, #b08d4a)); font-size: var(--el-label-size); }
+.c-cohost__special-label { font-family: var(--el-label-font, var(--t-font-accent)); color: var(--el-label-color, var(--t-gold, #b08d4a)); font-size: var(--el-label-size); }
+.c-cohost__side { font-family: var(--el-label-font, var(--t-font-accent)); color: var(--el-label-color, var(--t-gold, #b08d4a)); font-size: var(--el-label-size); }
 .c-cohost__chip {
   padding: 0.35rem 0.85rem;
   border-radius: 999px;
