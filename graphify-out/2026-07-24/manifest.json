@@ -555,13 +555,13 @@
     "semantic_hash": ""
   },
   "src/modules/invitation/themes/_core/sections/gallery/GalleryStyleCarousel.vue": {
-    "mtime": 1784822961.897943,
-    "ast_hash": "9630fe681f250b2b25ab5b5cd78151b5",
+    "mtime": 1784691700.6362062,
+    "ast_hash": "ea0c6e3f7645d7b1516ea2b7a0b9559a",
     "semantic_hash": ""
   },
   "src/modules/invitation/themes/_core/sections/gallery/GalleryStyleFloating.vue": {
-    "mtime": 1784822974.0504658,
-    "ast_hash": "8c4d545e2420188b489d3008d5966f26",
+    "mtime": 1784691716.442638,
+    "ast_hash": "8a4de5294f0f0ecad858e5b9e10d9a5e",
     "semantic_hash": ""
   },
   "src/modules/invitation/themes/_core/sections/gallery/GalleryStyleGrid.vue": {
@@ -715,8 +715,8 @@
     "semantic_hash": ""
   },
   "src/modules/invitation/themes/_core/sections/gallery/GalleryStyleStrip.vue": {
-    "mtime": 1784822992.716615,
-    "ast_hash": "0a3333950d62d5f6f41b2534d059ecce",
+    "mtime": 1784691758.9925325,
+    "ast_hash": "c9b220eab2acba000cc0bf668dba8231",
     "semantic_hash": ""
   },
   "src/modules/invitation/themes/_core/sections/gift/GiftSection.vue": {
