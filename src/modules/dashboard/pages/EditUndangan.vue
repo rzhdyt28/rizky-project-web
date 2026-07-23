@@ -119,17 +119,17 @@ async function submit() {
 
       <SectionVisibilityChecklist :form="form" />
 
-      <HeroSectionFields :form="form" :uploading="uploading" :handle-upload="handleUpload" :handle-slideshow-upload="handleSlideshowUpload" />
+      <HeroSectionFields :form="form" :invitation-id="invitation.id" :handle-upload="handleUpload" />
       <CoupleSectionFields :form="form" :invitation-id="invitation.id" :handle-upload="handleUpload" />
       <EventsSectionFields :form="form" :invitation-id="invitation.id" />
       <CountdownSectionFields :form="form" :invitation-id="invitation.id" :handle-upload="handleUpload" />
       <LoveStorySectionFields :form="form" :invitation-id="invitation.id" />
       <GallerySectionFields :form="form" :invitation-id="invitation.id" />
-      <VideoSectionFields :form="form" :invitation-id="invitation.id" />
+      <VideoSectionFields :form="form" :invitation-id="invitation.id" :handle-upload="handleUpload" />
       <RsvpGuestbookSectionFields :form="form" :invitation-id="invitation.id" />
       <GiftSectionFields :form="form" :invitation-id="invitation.id" />
       <CoHostSectionFields :form="form" :invitation-id="invitation.id" />
-      <GlobalStyleSectionFields :form="form" :handle-upload="handleUpload" />
+      <GlobalStyleSectionFields :form="form" :uploading="uploading" :handle-upload="handleUpload" :handle-slideshow-upload="handleSlideshowUpload" />
       <GlobalTypographySectionFields :form="form" :uploading="uploading" :handle-upload="handleUpload" />
 
       <!-- SUBMIT (sticky) -->

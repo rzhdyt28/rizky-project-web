@@ -1,11 +1,17 @@
 <script setup>
 /** Section 6 — Galeri. Isi foto dikelola di halaman "Galeri Foto". */
 import SectionDisplayFields from '../SectionDisplayFields.vue';
+import SectionElementStyleFields from '../SectionElementStyleFields.vue';
 
 defineProps({
   form: { type: Object, required: true },
   invitationId: { type: [Number, String], required: true },
 });
+
+const ELEMENTS = [
+  ['title', 'Judul section ("Galeri")'],
+  ['caption', 'Kalimat pengantar'],
+];
 </script>
 
 <template>
@@ -21,9 +27,25 @@ defineProps({
           <option value="masonry">Masonry</option>
           <option value="polaroid">Polaroid</option>
           <option value="floating">Floating (thumbnail + panah)</option>
+          <option value="circles">Circles (thumbnail bulat)</option>
+          <option value="strip">Strip (scroll horizontal, swipe HP)</option>
+          <option value="framed">Framed (1 kolom besar berbingkai)</option>
         </select>
+        <p class="mt-1 text-[11px] opacity-60">Semua gaya sudah bisa di-swipe di HP dan punya paginasi.</p>
       </div>
+      <textarea
+        v-model="form.theme_options.gallery.caption"
+        class="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800 sm:col-span-2"
+        rows="2" placeholder="Kalimat pengantar (opsional, di bawah judul)"
+      />
     </div>
-    <SectionDisplayFields class="mt-3" :section="form.theme_options.sections.gallery" :invitation-id="invitationId" />
+    <SectionElementStyleFields class="mt-3" :elements="form.theme_options.sections.gallery.elements" :list="ELEMENTS" />
+    <SectionDisplayFields
+      class="mt-3"
+      :section="form.theme_options.sections.gallery"
+      :section-bg="form.theme_options.section_bg.gallery"
+      :invitation-id="invitationId"
+      @update:section-bg="form.theme_options.section_bg.gallery = $event"
+    />
   </details>
 </template>

@@ -11,19 +11,19 @@ defineProps({
 
 <template>
   <details class="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
-    <summary class="cursor-pointer font-medium">Global — Tipografi (Judul &amp; Isi)</summary>
+    <summary class="cursor-pointer font-medium">Global — Font (Judul, Isi, Kaligrafi)</summary>
     <datalist id="heading-fonts"><option v-for="f in HEADING_FONTS" :key="f" :value="f" /></datalist>
     <datalist id="body-fonts"><option v-for="f in BODY_FONTS" :key="f" :value="f" /></datalist>
     <datalist id="script-fonts"><option v-for="f in SCRIPT_FONTS" :key="f" :value="f" /></datalist>
+    <datalist id="element-fonts">
+      <option v-for="f in [...HEADING_FONTS, ...SCRIPT_FONTS, ...BODY_FONTS]" :key="f" :value="f" />
+    </datalist>
+    <p class="mt-1 text-[11px] opacity-60">Ukuran &amp; warna diatur per-section lewat "Tipografi, Ukuran &amp; Warna tiap elemen teks section" di tiap section.</p>
     <div class="mt-3 grid gap-2 sm:grid-cols-3">
       <input v-model="form.theme_options.fonts.heading" list="heading-fonts" class="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800" placeholder="Font judul" />
-      <input v-model.number="form.theme_options.type.title_size" type="number" class="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800" placeholder="Ukuran judul (px)" />
-      <input v-model="form.theme_options.type.title_color" type="color" class="h-9 rounded-lg border border-slate-200 dark:border-slate-700" />
       <input v-model="form.theme_options.fonts.body" list="body-fonts" class="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800" placeholder="Font isi" />
-      <input v-model.number="form.theme_options.type.body_size" type="number" class="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800" placeholder="Ukuran isi (px)" />
-      <input v-model="form.theme_options.type.body_color" type="color" class="h-9 rounded-lg border border-slate-200 dark:border-slate-700" />
       <input v-model="form.theme_options.fonts.script" list="script-fonts" class="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800" placeholder="Font kaligrafi" />
-      <input v-model="form.theme_options.fonts.css_url" type="url" class="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800 sm:col-span-2" placeholder="URL CSS font (opsional)" />
+      <input v-model="form.theme_options.fonts.css_url" type="url" class="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800 sm:col-span-3" placeholder="URL CSS font (opsional)" />
     </div>
   </details>
 

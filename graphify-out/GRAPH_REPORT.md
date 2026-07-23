@@ -1,21 +1,21 @@
-# Graph Report - rizky-project-web  (2026-07-21)
+# Graph Report - rizky-project-web  (2026-07-22)
 
 ## Corpus Check
-- 98 files · ~31,914 words
+- 162 files · ~48,131 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 479 nodes · 599 edges · 36 communities (33 shown, 3 thin omitted)
+- 730 nodes · 1053 edges · 49 communities (46 shown, 3 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 6 edges (avg confidence: 0.6)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `1c70ccb3`
+- Built from commit: `9939a9b7`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- Community 0
+- GallerySection.vue
 - Community 1
 - Community 2
 - Community 3
@@ -27,115 +27,132 @@
 - Community 9
 - Community 10
 - Community 11
-- Community 14
+- Community 12
 - KisahCinta.vue
 - CoverSection.vue
-- Acara.vue
+- client.js
 - GaleriFoto.vue
 - Rsvp.vue
-- assetUrl
-- Beranda.vue
+- CasesList.vue
+- useInvitation.js
 - rizky-project-web
-- UndanganSaya.vue
+- CountdownSection.vue
 - Membuat Tema Baru
 - CLAUDE.md
 - README.md
-- client.js
-- SectionWrapper.vue
-- registry.js
-- UcapanDoa.vue
-- useInvitation.js
+- _template/Layout.vue
 - CoupleSection.vue
+- index.js
+- client.js
+- dashboard/pages/Login.vue
+- skripsi/pages/Login.vue
 - useReveal.js
+- Register.vue
+- UcapanDoa.vue
+- CasesList.vue
+- RsvpSection.vue
+- SectionRenderer.vue
+- invitationFormOptions.js
+- main.js
+- GiftSection.vue
+- UcapanDoa.vue
+- useInvitationForm.js
+- LoveStoryStyleGrid.vue
+- EventSection.vue
+- GiftStyleStack.vue
 
 ## God Nodes (most connected - your core abstractions)
-1. `api` - 11 edges
-2. `useCrudResource()` - 10 edges
-3. `assetUrl()` - 10 edges
-4. `_template/Layout.vue` - 8 edges
-5. `Membuat Tema Baru` - 5 edges
-6. `useGuestShare()` - 5 edges
-7. `useMyInvitations()` - 5 edges
-8. `rizky-project-web` - 5 edges
-9. `useEditableForm()` - 4 edges
-10. `useEvents()` - 4 edges
+1. `assetUrl()` - 49 edges
+2. `api` - 18 edges
+3. `useCrudResource()` - 10 edges
+4. `toMapsEmbed()` - 8 edges
+5. `uploadThemeFile()` - 7 edges
+6. `vReveal` - 6 edges
+7. `useGuestShare()` - 5 edges
+8. `useMyInvitations()` - 5 edges
+9. `load()` - 5 edges
+10. `useSkripsiAuthStore` - 5 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `useGuestShare()` --indirect_call--> `copy()`  [INFERRED]
-  src/modules/dashboard/composables/useGuestShare.js → src/modules/invitation/themes/_core/sections/GiftSection.vue
-- `useMyInvitations()` --indirect_call--> `base()`  [INFERRED]
-  src/modules/invitation/composables/useInvitation.js → src/modules/invitation/composables/useGuestbookAdmin.js
-- `useEvents()` --calls--> `useCrudResource()`  [EXTRACTED]
-  src/modules/invitation/composables/useEvents.js → src/shared/composables/useCrudResource.js
-- `useGalleryPhotos()` --calls--> `useCrudResource()`  [EXTRACTED]
-  src/modules/invitation/composables/useGalleryPhotos.js → src/shared/composables/useCrudResource.js
-- `useGifts()` --calls--> `useCrudResource()`  [EXTRACTED]
-  src/modules/invitation/composables/useGifts.js → src/shared/composables/useCrudResource.js
+  src/modules/dashboard/composables/useGuestShare.js → src/modules/invitation/themes/_core/sections/gift/GiftSection.vue
+- `onCardBgFile()` --calls--> `uploadThemeFile()`  [EXTRACTED]
+  src/modules/dashboard/components/SectionDisplayFields.vue → src/modules/invitation/composables/useThemeUpload.js
+- `handleUpload()` --calls--> `uploadThemeFile()`  [EXTRACTED]
+  src/modules/dashboard/pages/EditUndangan.vue → src/modules/invitation/composables/useThemeUpload.js
+- `handleSlideshowUpload()` --calls--> `uploadThemeFile()`  [EXTRACTED]
+  src/modules/dashboard/pages/EditUndangan.vue → src/modules/invitation/composables/useThemeUpload.js
+- `cardPhotoUrl()` --calls--> `assetUrl()`  [EXTRACTED]
+  src/modules/invitation/themes/mildness/Layout.vue → src/modules/invitation/composables/assets.js
 
 ## Import Cycles
 - None detected.
 
-## Communities (36 total, 3 thin omitted)
+## Communities (49 total, 3 thin omitted)
 
-### Community 0 - "Community 0"
-Cohesion: 0.12
-Nodes (11): useGuestbook(), useRsvp(), error, form, gb, props, done, error (+3 more)
+### Community 0 - "GallerySection.vue"
+Cohesion: 0.05
+Nodes (27): activeStyle, closeLightbox(), currentPhoto, gridPage, gridPageCount, lightboxIndex, lightboxNext(), lightboxPrev() (+19 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.08
-Nodes (22): activeCorners, cardOf(), ctx, heroCardStyle, heroSlides, heroUseCard, opened, props (+14 more)
+Cohesion: 0.06
+Nodes (26): activeLayout, layout, LAYOUTS, now, numeralStyle, parts, props, timer (+18 more)
 
 ### Community 2 - "Community 2"
-Cohesion: 0.22
-Nodes (8): dateLong, layout, now, parts, props, quoteText, style, timer
+Cohesion: 0.13
+Nodes (7): assetUrl(), emit, emit, emit, emit, emit, emit
 
 ### Community 3 - "Community 3"
-Cohesion: 0.08
-Nodes (20): app, auth, MENU, router, sidebarOpen, theme, auth, busy (+12 more)
+Cohesion: 0.05
+Nodes (39): ELEMENTS, props, ELEMENTS, ELEMENTS, ELEMENTS, ELEMENTS, ELEMENTS, bgSource (+31 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.11
-Nodes (14): isOpen, usePortfolio(), usePortfolioDocumentation(), closeLightbox(), { experiences, loading, error, fetchDocumentation }, handleKeydown(), { lang, toggleLang, t }, lightboxUrl (+6 more)
+Cohesion: 0.08
+Nodes (23): addAlternative(), addCriterion(), alternativeLabel, alternatives, busy, calculatedAt, canCalculate, criteria (+15 more)
 
 ### Community 5 - "Community 5"
 Cohesion: 0.09
-Nodes (18): hexToRgba(), toEmbedUrl(), toMapsEmbed(), useThemeOptions(), { cssVars, can, sectionOrder, labels, cover, florals, background, layoutOpts, sectionBg, sectionHeight, countdown, animation, sectionCard, sectionFontVars, hero }, { data, isLoading, isError }, features, invitation (+10 more)
+Nodes (16): usePublicInvitation(), { cssVars, can, sectionOrder, labels, cover, florals, background, layoutOpts, sectionBg, sectionHeight, countdown, animation, sectionCard, sectionFontVars, sectionCardBgPhoto, hero }, { data, isLoading, isError }, features, invitation, PRELOADED, route, slug (+8 more)
 
 ### Community 6 - "Community 6"
-Cohesion: 0.10
-Nodes (18): cardOf(), ctx, dateLong, firstEvent, opened, props, quote, reveal (+10 more)
+Cohesion: 0.14
+Nodes (15): cardOf(), cardPhotoUrl(), ctx, dateLong, firstEvent, leftBgStyle, opened, props (+7 more)
 
 ### Community 7 - "Community 7"
 Cohesion: 0.06
 Nodes (31): autoprefixer, axios, gsap, dependencies, axios, gsap, pinia, @tanstack/vue-query (+23 more)
 
 ### Community 8 - "Community 8"
-Cohesion: 0.06
-Nodes (21): props, HERO_ELEMENTS, CARD_STYLES, props, uploading, SECTIONS, BODY_FONTS, CARD_STYLES (+13 more)
+Cohesion: 0.22
+Nodes (10): STATUS_LABEL, useGuestShare(), viewUrl(), auth, { copy, copied }, { data, isLoading, isError, error }, shareHref(), shareText() (+2 more)
 
 ### Community 9 - "Community 9"
 Cohesion: 0.12
 Nodes (12): busy, err, form, gate, { guestLink, waMessage, waHref, copy, copied }, guestsQuery, importFile, importing (+4 more)
 
 ### Community 10 - "Community 10"
-Cohesion: 0.08
-Nodes (17): closeLightbox(), currentPhoto, floatingIndex, floatingPageIdx, floatingPagesRaw, floatingThumbs, gridPage, gridPageCount (+9 more)
+Cohesion: 0.21
+Nodes (9): addGuest(), { data, isLoading, isError, error }, { guestLink, waMessage, waHref, copy, copied }, invitations, loadGuests(), loadRsvp(), open, panel (+1 more)
 
 ### Community 11 - "Community 11"
-Cohesion: 0.15
-Nodes (11): CORE, entries, props, closeLightbox(), currentStory, lightboxIndex, lightboxNext(), lightboxPrev() (+3 more)
+Cohesion: 0.13
+Nodes (11): activeStyle, closeLightbox(), currentStory, lightboxIndex, lightboxNext(), lightboxPrev(), onKeydown(), onTouchEnd() (+3 more)
+
+### Community 12 - "Community 12"
+Cohesion: 0.14
+Nodes (15): activeCorners, cardOf(), cardPhotoUrl(), ctx, heroCardPhotoUrl, heroCardStyle, heroFontVars, heroScreenStyle (+7 more)
 
 ### Community 17 - "KisahCinta.vue"
-Cohesion: 0.36
-Nodes (4): active, list, props, assetUrl()
+Cohesion: 0.05
+Nodes (27): isOpen, isSticky, usePortfolio(), usePortfolioDocumentation(), closeLightbox(), { experiences, loading, error, fetchDocumentation }, handleKeydown(), { lang, toggleLang, t } (+19 more)
 
 ### Community 18 - "CoverSection.vue"
-Cohesion: 0.33
-Nodes (4): emit, ornament, photo, props
+Cohesion: 0.20
+Nodes (8): coverCd, dateLong, elVars, emit, firstEvent, heroSlides, props, TEXT_ELEMENTS
 
-### Community 19 - "Acara.vue"
-Cohesion: 0.22
-Nodes (6): initials, props, _template/Layout.vue, ctx, opened, props
+### Community 19 - "client.js"
+Cohesion: 0.14
+Nodes (10): auth, busy, loading, newAlternativeLabel, newTitle, recentCases, router, showNewCaseForm (+2 more)
 
 ### Community 20 - "GaleriFoto.vue"
 Cohesion: 0.06
@@ -145,21 +162,17 @@ Nodes (37): useEditableForm(), { editingId, form, err, startEdit, resetForm, sub
 Cohesion: 0.28
 Nodes (6): ATTENDANCE_LABEL, gate, invitationId, { list }, rsvpExportUrl(), useRsvpList()
 
-### Community 22 - "assetUrl"
-Cohesion: 0.40
-Nodes (3): audio, playing, props
-
-### Community 23 - "Beranda.vue"
-Cohesion: 0.24
-Nodes (9): STATUS_LABEL, useGuestShare(), viewUrl(), auth, { copy, copied }, { data, isLoading, isError, error }, shareHref(), shareText() (+1 more)
+### Community 23 - "useInvitation.js"
+Cohesion: 0.17
+Nodes (7): activeStyle, items, pria, props, spesial, STYLES, wanita
 
 ### Community 24 - "rizky-project-web"
 Cohesion: 0.33
 Nodes (5): Deploy, Menjalankan (dev), Peta domain (produksi, semua di VPS), rizky-project-web, Struktur — satu modul, satu folder
 
-### Community 25 - "UndanganSaya.vue"
-Cohesion: 0.21
-Nodes (9): addGuest(), { data, isLoading, isError, error }, { guestLink, waMessage, waHref, copy, copied }, invitations, loadGuests(), loadRsvp(), open, panel (+1 more)
+### Community 25 - "CountdownSection.vue"
+Cohesion: 0.24
+Nodes (3): PRESETS, setRevealScroller(), vReveal
 
 ### Community 26 - "Membuat Tema Baru"
 Cohesion: 0.33
@@ -169,49 +182,101 @@ Nodes (5): Checklist sebelum rilis tema, Langkah, Membedakan satu section saja, 
 Cohesion: 0.50
 Nodes (3): Conventions, Project, Structure
 
-### Community 29 - "client.js"
-Cohesion: 0.31
-Nodes (3): { data, isLoading, isError }, api, csrf()
+### Community 29 - "_template/Layout.vue"
+Cohesion: 0.14
+Nodes (9): emit, ornament, photo, props, initials, props, ctx, opened (+1 more)
 
-### Community 30 - "SectionWrapper.vue"
+### Community 30 - "CoupleSection.vue"
+Cohesion: 0.12
+Nodes (8): activeStyle, eyebrowText, hasPhotos, people, props, showEyebrow, styleName, STYLES
+
+### Community 31 - "index.js"
+Cohesion: 0.50
+Nodes (3): active, list, props
+
+### Community 32 - "client.js"
+Cohesion: 0.26
+Nodes (7): { data, isLoading, isError }, cases, load(), loading, removeCase(), api, csrf()
+
+### Community 33 - "dashboard/pages/Login.vue"
 Cohesion: 0.20
-Nodes (7): items, pria, props, spesial, wanita, copied, copy()
+Nodes (8): auth, busy, email, error, password, route, router, useAuthStore
 
-### Community 31 - "registry.js"
-Cohesion: 0.20
-Nodes (6): mildness/tokens.js, themes, senja/tokens.js, FEATURES, STEPS, THEMES
+### Community 34 - "skripsi/pages/Login.vue"
+Cohesion: 0.22
+Nodes (7): auth, busy, email, error, password, route, router
 
-### Community 32 - "UcapanDoa.vue"
-Cohesion: 0.38
-Nodes (5): gate, invitationId, { list, setApproved, remove }, base(), useGuestbookAdmin()
-
-### Community 33 - "useInvitation.js"
-Cohesion: 0.47
-Nodes (3): { invitation, isLoading, isError, error }, useActiveInvitation(), useMyInvitations()
-
-### Community 34 - "CoupleSection.vue"
+### Community 35 - "useReveal.js"
 Cohesion: 0.40
-Nodes (4): hasPhotos, people, props, style
+Nodes (3): audio, playing, props
+
+### Community 36 - "Register.vue"
+Cohesion: 0.25
+Nodes (6): auth, busy, error, form, router, useSkripsiAuthStore
+
+### Community 37 - "UcapanDoa.vue"
+Cohesion: 0.17
+Nodes (8): activeStyle, caption, creditDate, embedSrc, eyebrow, isLocalFile, props, STYLES
+
+### Community 38 - "CasesList.vue"
+Cohesion: 0.29
+Nodes (3): app, router, useThemeStore
+
+### Community 39 - "RsvpSection.vue"
+Cohesion: 0.17
+Nodes (9): useRsvp(), activeStyle, done, error, form, props, rsvp, STYLES (+1 more)
+
+### Community 40 - "SectionRenderer.vue"
+Cohesion: 0.40
+Nodes (3): CORE, entries, props
+
+### Community 41 - "invitationFormOptions.js"
+Cohesion: 0.40
+Nodes (3): dateLong, props, quoteText
+
+### Community 42 - "main.js"
+Cohesion: 0.29
+Nodes (5): auth, MENU, router, sidebarOpen, theme
+
+### Community 43 - "GiftSection.vue"
+Cohesion: 0.40
+Nodes (4): activeStyle, copied, props, STYLES
+
+### Community 44 - "UcapanDoa.vue"
+Cohesion: 0.24
+Nodes (8): { invitation, isLoading, isError, error }, gate, invitationId, { list, setApproved, remove }, base(), useGuestbookAdmin(), useActiveInvitation(), useMyInvitations()
+
+### Community 45 - "useInvitationForm.js"
+Cohesion: 0.36
+Nodes (6): blankElements(), blankForm(), blankSection(), SECTION_ELEMENTS, SECTION_KEYS, useInvitationForm()
+
+### Community 49 - "LoveStoryStyleGrid.vue"
+Cohesion: 0.50
+Nodes (4): CENTRAL_HOSTS, centralRoutes, isCentralHost(), tenantRoutes
+
+### Community 50 - "EventSection.vue"
+Cohesion: 0.07
+Nodes (14): useGuestbook(), hexToRgba(), toEmbedUrl(), toMapsEmbed(), useThemeOptions(), activeStyle, props, STYLES (+6 more)
 
 ## Knowledge Gaps
-- **243 isolated node(s):** `props`, `CARD_STYLES`, `uploading`, `SECTIONS`, `props` (+238 more)
+- **362 isolated node(s):** `name`, `private`, `type`, `dev`, `build` (+357 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **3 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `_template/Layout.vue` connect `Acara.vue` to `CoverSection.vue`, `Community 11`, `assetUrl`?**
-  _High betweenness centrality (0.119) - this node is a cross-community bridge._
-- **Why does `api` connect `client.js` to `UcapanDoa.vue`, `useInvitation.js`, `Community 9`, `Rsvp.vue`, `Beranda.vue`, `UndanganSaya.vue`?**
-  _High betweenness centrality (0.037) - this node is a cross-community bridge._
-- **Why does `assetUrl()` connect `KisahCinta.vue` to `Community 2`, `CoupleSection.vue`, `Community 10`, `CoverSection.vue`, `assetUrl`, `SectionWrapper.vue`?**
-  _High betweenness centrality (0.028) - this node is a cross-community bridge._
-- **What connects `props`, `CARD_STYLES`, `uploading` to the rest of the system?**
-  _243 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.125 - nodes in this community are weakly interconnected._
+- **Why does `assetUrl()` connect `Community 2` to `GallerySection.vue`, `Community 1`, `useReveal.js`, `UcapanDoa.vue`, `Community 6`, `Community 11`, `Community 12`, `CoverSection.vue`, `GaleriFoto.vue`, `GiftStyleStack.vue`, `CountdownSection.vue`, `_template/Layout.vue`, `CoupleSection.vue`, `index.js`?**
+  _High betweenness centrality (0.136) - this node is a cross-community bridge._
+- **Why does `api` connect `client.js` to `Community 3`, `Community 4`, `Register.vue`, `Community 8`, `Community 9`, `Community 10`, `UcapanDoa.vue`, `client.js`, `GaleriFoto.vue`, `Rsvp.vue`?**
+  _High betweenness centrality (0.120) - this node is a cross-community bridge._
+- **Why does `useActiveInvitation()` connect `UcapanDoa.vue` to `Community 3`?**
+  _High betweenness centrality (0.013) - this node is a cross-community bridge._
+- **What connects `name`, `private`, `type` to the rest of the system?**
+  _362 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `GallerySection.vue` be split into smaller, more focused modules?**
+  _Cohesion score 0.0545876887340302 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.07977207977207977 - nodes in this community are weakly interconnected._
-- **Should `Community 3` be split into smaller, more focused modules?**
-  _Cohesion score 0.07586206896551724 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06050420168067227 - nodes in this community are weakly interconnected._
+- **Should `Community 2` be split into smaller, more focused modules?**
+  _Cohesion score 0.13333333333333333 - nodes in this community are weakly interconnected._

@@ -2,17 +2,45 @@ import { reactive } from 'vue';
 
 const SECTION_KEYS = ['couple', 'events', 'countdown', 'love_story', 'gallery', 'video', 'rsvp', 'guestbook', 'gift', 'co_host'];
 
-/** Bentuk kosong satu section (dipakai theme_options.sections.{key}) — cermin
- * InvitationResource::sectionDisplayFields() Filament. */
-export function blankSection() {
-  return { visible: true, card: '', card_style: '', section_bg: '', font_heading: '', font_body: '', title_size: '', title_color: '', body_size: '', body_color: '' };
+/** Daftar elemen bernama per-section (v4) -- cermin persis daftar $elements
+ * yang dipakai tiap panggilan sectionElementStyleFields() di
+ * InvitationLookResource.php (tab masing-masing section). */
+export const SECTION_ELEMENTS = {
+  countdown:  ['eyebrow', 'date', 'quote', 'label'],
+  couple:     ['eyebrow', 'opening', 'names', 'parents'],
+  events:     ['title', 'name', 'date', 'venue'],
+  co_host:    ['title', 'label', 'name'],
+  love_story: ['title', 'date', 'name', 'text'],
+  video:      ['title', 'eyebrow', 'caption', 'credit'],
+  rsvp:       ['title', 'button'],
+  guestbook:  ['title', 'name', 'text'],
+  gift:       ['title', 'name', 'value'],
+  gallery:    ['title', 'caption'],
+};
+
+function blankElements(key) {
+  const out = {};
+  for (const elKey of SECTION_ELEMENTS[key] ?? []) out[elKey] = { font: '', size: '', color: '' };
+  return out;
 }
 
-/** Bentuk kosong penuh form edit undangan — cermin InvitationResource::form(). */
+/** Bentuk kosong satu section (dipakai theme_options.sections.{key}) — cermin
+ * InvitationLookResource::sectionDisplayFields() + sectionElementStyleFields() Filament. */
+export function blankSection(key) {
+  return {
+    visible: true, card: '', card_style: '', card_bg: '', card_bg_photo: '', bg_color: '',
+    elements: blankElements(key),
+  };
+}
+
+/** Bentuk kosong penuh form edit undangan — cermin InvitationLookResource::form(). */
 export function blankForm() {
   const sections = {};
-  for (const k of SECTION_KEYS) sections[k] = blankSection();
+  const sectionBg = {};
+  for (const k of SECTION_KEYS) { sections[k] = blankSection(k); sectionBg[k] = ''; }
   sections.countdown_hero = { visible: true };
+  sections.hero = { card_bg: '', card_bg_photo: '', bg_color: '', elements: {} };
+  sectionBg.hero = '';
   return {
     slug: '', status: 'draft', theme_id: null,
     groom_name: '', bride_name: '', groom_parents: '', bride_parents: '', opening_text: '',
@@ -20,27 +48,39 @@ export function blankForm() {
     co_hosts: [],
     theme_options: {
       hero: {
-        style: 'classic', position: '', effect: 'fade', interval: 6, dresscode_enabled: false, dresscode: '', card_style: '', name_font: '', slideshow: [],
+        style: 'classic', effect: 'fade', interval: 6, dresscode_enabled: false, dresscode: '',
+        card_style: '', slideshow: [], video_url: '', video_effect: '', framed_photo: '',
         elements: {
-          eyebrow: { align: '', order: 1 }, photo: { align: '', order: 2 }, names: { align: '', order: 3 }, date: { align: '', order: 4 },
-          countdown: { align: '', order: 5 }, dresscode: { align: '', order: 6 }, guest: { align: '', order: 7 }, button: { align: '', order: 8 },
+          eyebrow: { align: '', order: 1, font: '', size: '', color: '' },
+          photo: { align: '', order: 2 },
+          names: { align: '', order: 3, font: '', size: '', color: '' },
+          date: { align: '', order: 4, font: '', size: '', color: '' },
+          countdown: { align: '', order: 5 },
+          countdown_label: { font: '', size: '', color: '' },
+          dresscode: { align: '', order: 6, font: '', size: '', color: '' },
+          guest: { align: '', order: 7, font: '', size: '', color: '' },
+          button: { align: '', order: 8, font: '', size: '', color: '' },
         },
       },
       background: { photo: '', photo_mobile: '', ornament_upload: '', ornament_asset: '' },
       layout: { card: true, hero_card: 'inherit', section_height: 'full' },
-      couple: { style: '', show_photos: false, groom_photo: '', bride_photo: '' },
-      events: { style: 'card' },
+      couple: { style: '', show_photos: false, groom_photo: '', bride_photo: '', show_eyebrow: true, eyebrow_text: '' },
+      events: { style: 'card', show_maps: true },
       countdown: { style: 'circle', layout: 'simple', photo: '', quote: '' },
       love_story: { show_photos: false, style: 'stacked' },
-      gallery: { style: 'carousel' },
-      video: { eyebrow: '', caption: '' },
+      gallery: { style: 'carousel', caption: '' },
+      video: { eyebrow: '', caption: '', style: 'classic' },
+      rsvp: { style: 'card' },
+      guestbook: { style: 'list' },
+      gift: { style: 'panel' },
+      co_host: { style: 'classic' },
       florals: { tl: '', tr: '', bl: '', br: '' },
       animation: { preset: 'fade-up' },
       fonts: { heading: '', body: '', script: '', css_url: '' },
-      type: { title_size: '', title_color: '', body_size: '', body_color: '' },
       card: { style: '', bg: '', opacity: '', shadow_color: '', shadow_size: '', radius_tl: '', radius_tr: '', radius_bl: '', radius_br: '' },
       colors: { accent: '', paper: '', ink: '' },
       sections,
+      section_bg: sectionBg,
     },
   };
 }

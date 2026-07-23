@@ -1,11 +1,19 @@
 <script setup>
 /** Section 5 — Kisah Kami. Isi kisah dikelola di halaman "Kisah Cinta". */
 import SectionDisplayFields from '../SectionDisplayFields.vue';
+import SectionElementStyleFields from '../SectionElementStyleFields.vue';
 
 defineProps({
   form: { type: Object, required: true },
   invitationId: { type: [Number, String], required: true },
 });
+
+const ELEMENTS = [
+  ['title', 'Judul section ("Kisah Kami")'],
+  ['date', 'Tanggal tiap kisah'],
+  ['name', 'Judul tiap kisah'],
+  ['text', 'Isi cerita'],
+];
 </script>
 
 <template>
@@ -22,8 +30,18 @@ defineProps({
         <option value="timeline">2. Timeline — garis putus-putus + penanda hati</option>
         <option value="alternate">3. Alternate — zigzag kiri-kanan</option>
         <option value="polaroid">4. Polaroid — kartu foto miring ala scrapbook</option>
+        <option value="letter">5. Letter — ala surat/postcard</option>
+        <option value="grid">6. Grid — mosaic foto 2 kolom</option>
+        <option value="minimal">7. Minimal — teks di tengah</option>
       </select>
     </label>
-    <SectionDisplayFields class="mt-3" :section="form.theme_options.sections.love_story" :invitation-id="invitationId" />
+    <SectionElementStyleFields class="mt-3" :elements="form.theme_options.sections.love_story.elements" :list="ELEMENTS" />
+    <SectionDisplayFields
+      class="mt-3"
+      :section="form.theme_options.sections.love_story"
+      :section-bg="form.theme_options.section_bg.love_story"
+      :invitation-id="invitationId"
+      @update:section-bg="form.theme_options.section_bg.love_story = $event"
+    />
   </details>
 </template>

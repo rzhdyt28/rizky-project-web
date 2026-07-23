@@ -1,5 +1,4 @@
 {
-  "0": "Community 0",
   "1": "Community 1",
   "2": "Community 2",
   "3": "Community 3",
@@ -18,12 +17,16 @@
   "16": "Community 16",
   "17": "KisahCinta.vue",
   "18": "CoverSection.vue",
-  "19": "Acara.vue",
+  "19": "client.js",
   "20": "GaleriFoto.vue",
   "21": "Rsvp.vue",
-  "22": "assetUrl",
+  "22": "CasesList.vue",
+  "23": "useInvitation.js",
   "24": "rizky-project-web",
+  "25": "CountdownSection.vue",
   "26": "Membuat Tema Baru",
   "27": "CLAUDE.md",
-  "28": "README.md"
+  "28": "README.md",
+  "29": "_template/Layout.vue",
+  "35": "useReveal.js"
 }

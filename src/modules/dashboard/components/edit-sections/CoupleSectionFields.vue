@@ -1,12 +1,20 @@
 <script setup>
 /** "Data Mempelai" + Section 2 — Mempelai. */
 import SectionDisplayFields from '../SectionDisplayFields.vue';
+import SectionElementStyleFields from '../SectionElementStyleFields.vue';
 
 defineProps({
   form: { type: Object, required: true },
   invitationId: { type: [Number, String], required: true },
   handleUpload: { type: Function, required: true },
 });
+
+const ELEMENTS = [
+  ['eyebrow', 'Kalimat pembuka basmalah'],
+  ['opening', 'Kalimat pengantar'],
+  ['names', 'Nama mempelai'],
+  ['parents', 'Nama orang tua'],
+];
 </script>
 
 <template>
@@ -31,6 +39,9 @@ defineProps({
           <option value="cards">Cards</option>
           <option value="circle">Circle</option>
           <option value="arch">Arch</option>
+          <option value="portrait">Portrait</option>
+          <option value="ribbon">Ribbon</option>
+          <option value="polaroid">Polaroid</option>
         </select>
       </div>
       <label class="flex items-center gap-2 text-sm">
@@ -46,7 +57,23 @@ defineProps({
           <input type="file" accept="image/*" class="text-sm" @change="handleUpload($event, 'couple', (p) => form.theme_options.couple.bride_photo = p)" />
         </div>
       </template>
+      <label class="flex items-center gap-2 text-sm sm:col-span-2">
+        <input v-model="form.theme_options.couple.show_eyebrow" type="checkbox" /> Tampilkan kalimat pembuka basmalah
+      </label>
+      <input
+        v-if="form.theme_options.couple.show_eyebrow"
+        v-model="form.theme_options.couple.eyebrow_text"
+        class="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800 sm:col-span-2"
+        placeholder="Bismillahirrahmanirrahim"
+      />
     </div>
-    <SectionDisplayFields class="mt-3" :section="form.theme_options.sections.couple" :invitation-id="invitationId" />
+    <SectionElementStyleFields class="mt-3" :elements="form.theme_options.sections.couple.elements" :list="ELEMENTS" />
+    <SectionDisplayFields
+      class="mt-3"
+      :section="form.theme_options.sections.couple"
+      :section-bg="form.theme_options.section_bg.couple"
+      :invitation-id="invitationId"
+      @update:section-bg="form.theme_options.section_bg.couple = $event"
+    />
   </details>
 </template>

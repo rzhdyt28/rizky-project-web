@@ -11,10 +11,11 @@
  *   background foto sendiri (sectionBg).
  * - Animasi scroll GSAP lewat v-reveal (global, composables/useReveal).
  */
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import './theme.css';
-import Cover from './sections/Cover.vue';
+import Cover from './sections/hero/Cover.vue';
 import BgSlideshow from '../../components/BgSlideshow.vue';
+import BgVideo from '../../components/BgVideo.vue';
 import FloatingCard from '../../components/FloatingCard.vue';
 import FloralCorner from '../../components/FloralCorner.vue';
 import SectionRenderer from '../../components/SectionRenderer.vue';
@@ -22,7 +23,12 @@ import FooterSection from '../_core/sections/FooterSection.vue';
 import MusicPlayer from '../_core/ui/MusicPlayer.vue';
 import BrandingFooter from '../_core/ui/BrandingFooter.vue';
 import { assetUrl } from '../../composables/assets';
-import { vReveal } from '../../composables/useReveal';
+import { vReveal, setRevealScroller } from '../../composables/useReveal';
+
+/* Mildness scroll di window biasa -- pastikan scroller kustom dari tema
+   lain (Senja) tidak "nyangkut" kalau navigasi SPA antar tema tanpa full
+   reload. */
+onMounted(() => setRevealScroller(null));
 
 const props = defineProps({
   invitation:   { type: Object, required: true },
@@ -43,6 +49,8 @@ const props = defineProps({
   sectionHeight: { type: Function, default: null },
   /* Font override PER-SECTION (sections.{key}.font_heading/font_body). */
   sectionFontVars: { type: Function, default: () => ({}) },
+  /* Foto KHUSUS di dalam kartu (sections.{key}.card_bg_photo, v5). */
+  sectionCardBgPhoto: { type: Function, default: () => null },
   /* v3: opsi hero (posisi, slideshow, efek, interval, dresscode, gaya kartu). */
   hero:         { type: Object, default: () => ({}) },
   countdown:    { type: Object, default: () => ({}) },
@@ -104,6 +112,28 @@ function screenStyle(key) {
   const bg = !cardOf(key).use ? props.sectionBg(key) : null;
   return bg ? { backgroundImage: `url(${assetUrl(bg)})` } : null;
 }
+
+/* Foto KHUSUS di dalam kartu (upload terpisah, v5: sections.{key}.card_bg_photo)
+   -- hanya masuk akal saat section BERKARTU (mode tanpa kartu pakai screenStyle). */
+function cardPhotoUrl(key) {
+  const bg = props.sectionCardBgPhoto(key);
+  return cardOf(key).use && bg ? assetUrl(bg) : null;
+}
+
+/* HERO tidak lewat SectionRenderer (blok <section> sendiri di atas) -- jadi
+   font/warna/background per-section ("Tampilan section" di tab Hero) & style
+   background di-terapkan manual di sini, sama seperti section konten lain. */
+const heroScreenStyle = computed(() => {
+  const bg = !heroUseCard.value ? props.sectionBg('hero') : null;
+  return bg ? { backgroundImage: `url(${assetUrl(bg)})` } : null;
+});
+const heroFontVars = computed(() => props.sectionFontVars('hero'));
+/* Foto KHUSUS di dalam kartu untuk hero -- field terpisah (v5), sama pola
+   dengan cardPhotoUrl() di atas. */
+const heroCardPhotoUrl = computed(() => {
+  const bg = props.sectionCardBgPhoto('hero');
+  return heroUseCard.value && bg ? assetUrl(bg) : null;
+});
 </script>
 
 <template>
@@ -113,13 +143,20 @@ function screenStyle(key) {
       color: 'var(--ov-body-color, var(--t-ink))',
       fontSize: 'var(--ov-body-size, 1rem)',
       fontFamily: 'var(--t-font-body)',
+      ...(background.color ? { '--page-bg': background.color } : {}),
     }"
   >
     <!-- ===== LAPIS BACKGROUND HALAMAN (di belakang semua konten) ===== -->
     <div class="fixed inset-0 z-0 pointer-events-none">
+      <!-- lapis 0: VIDEO (menang atas slideshow/foto kalau diisi) -->
+      <BgVideo
+        v-if="hero.videoUrl"
+        :src="assetUrl(hero.videoUrl)"
+        :effect="hero.videoEffect"
+      />
       <!-- lapis 1: SLIDESHOW (v3, bila diisi) MENGGANTIKAN foto statis -->
       <BgSlideshow
-        v-if="heroSlides.length"
+        v-else-if="heroSlides.length"
         :images="heroSlides"
         :effect="hero.effect"
         :interval="hero.interval"
@@ -127,17 +164,17 @@ function screenStyle(key) {
       <!-- lapis 1 fallback: foto statis (desktop; disembunyikan di HP
            bila ada versi mobile) + foto potret khusus HP -->
       <div
-        v-if="!heroSlides.length && background.photo"
+        v-else-if="background.photo"
         class="m-bg-photo m-bg-photo--desktop"
         :class="{ 'm-bg-photo--swap': background.photo_mobile }"
         :style="{ backgroundImage: `url(${assetUrl(background.photo)})` }"
       />
       <div
-        v-if="!heroSlides.length && background.photo_mobile"
+        v-if="!hero.videoUrl && !heroSlides.length && background.photo_mobile"
         class="m-bg-photo m-bg-photo--mobile"
         :style="{ backgroundImage: `url(${assetUrl(background.photo_mobile)})` }"
       />
-      <div v-if="heroSlides.length || background.photo || background.photo_mobile" class="m-bg-veil" />
+      <div v-if="hero.videoUrl || heroSlides.length || background.photo || background.photo_mobile" class="m-bg-veil" />
       <!-- lapis 2: ornamen di atas foto -->
       <div
         v-if="background.ornament"
@@ -157,11 +194,11 @@ function screenStyle(key) {
     <!-- ===== COVER (satu layar penuh) ===== -->
     <section
       v-if="!opened"
-      class="relative z-10 m-screen"
-      :class="!heroUseCard ? `m-hero--${hero.position ?? 'split'}` : null"
+      class="relative z-10 m-screen m-hero-screen"
+      :style="[heroScreenStyle, heroFontVars]"
     >
       <div class="m-frame">
-        <FloatingCard v-if="heroUseCard" :variant="heroCardStyle">
+        <FloatingCard v-if="heroUseCard" :variant="heroCardStyle" :photo="heroCardPhotoUrl">
           <Cover
             :hero="hero"
             :invitation="invitation"
@@ -199,7 +236,7 @@ function screenStyle(key) {
           :style="[screenStyle(entry.key), sectionFontVars(entry.key)]"
         >
           <div class="m-frame">
-            <FloatingCard v-if="cardOf(entry.key).use" :variant="cardOf(entry.key).style">
+            <FloatingCard v-if="cardOf(entry.key).use" :variant="cardOf(entry.key).style" :photo="cardPhotoUrl(entry.key)">
               <component :is="entry.comp" v-bind="entry.props" />
             </FloatingCard>
             <div v-else class="m-full">

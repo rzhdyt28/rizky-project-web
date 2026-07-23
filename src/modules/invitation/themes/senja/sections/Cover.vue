@@ -16,7 +16,8 @@
  */
 import { computed } from 'vue';
 import BgSlideshow from '../../../components/BgSlideshow.vue';
-import CountdownSection from '../../_core/sections/CountdownSection.vue';
+import BgVideo from '../../../components/BgVideo.vue';
+import CountdownSection from '../../_core/sections/countdown/CountdownSection.vue';
 import { assetUrl } from '../../../composables/assets';
 
 const props = defineProps({
@@ -36,6 +37,28 @@ const emit = defineEmits(['open']);
 /* Di hero, varian isi selalu 'simple' — GAYA ANGKA tetap ikut Filament. */
 const coverCd = computed(() => ({ ...props.countdownOpts, layout: 'simple' }));
 
+/* Ukuran & warna PER-ELEMEN (default_options.hero.elements.$key.size/color) --
+   pola SAMA dengan Mildness (lihat Cover.vue mildness): diteruskan sebagai
+   CSS var ke elemen anak (var(--hero-el-$key-color, ...)), dibind di root
+   <section> supaya mewarisi ke semua elemen teks di bawahnya. */
+const TEXT_ELEMENTS = ['eyebrow', 'names', 'date', 'countdown_label', 'dresscode', 'guest', 'button'];
+const elVars = computed(() => {
+  const vars = {};
+  const els = props.hero?.elements ?? {};
+  for (const key of TEXT_ELEMENTS) {
+    const el = els[key];
+    if (!el) continue;
+    if (el.font)  vars[`--hero-el-${key}-font`]  = `'${el.font}', serif`;
+    if (el.size)  vars[`--hero-el-${key}-size`]  = `${el.size}px`;
+    if (el.color) vars[`--hero-el-${key}-color`] = el.color;
+  }
+  // Field lama "Font nama pasangan di hero" -> tulis ke var lama juga supaya
+  // .senja-hero__names (var(--hero-name-font, ...)) tetap otomatis ikut.
+  const nameFont = els.names?.font || props.hero?.nameFont;
+  if (nameFont) vars['--hero-name-font'] = `'${nameFont}', cursive`;
+  return vars;
+});
+
 const firstEvent = computed(() => props.invitation.events?.[0] ?? null);
 
 const heroSlides = computed(() => props.hero?.slideshow ?? []);
@@ -49,23 +72,29 @@ const dateLong = computed(() => {
 </script>
 
 <template>
-  <section class="senja-hero" :class="`senja-hero--${hero.position ?? 'split'}`">
+  <section class="senja-hero" :style="elVars">
+    <!-- lapis 0: VIDEO (menang atas slideshow/foto kalau diisi) -->
+    <BgVideo
+      v-if="hero.videoUrl"
+      :src="assetUrl(hero.videoUrl)"
+      :effect="hero.videoEffect"
+    />
     <!-- v3: SLIDESHOW (bila diisi) menggantikan foto statis -->
     <BgSlideshow
-      v-if="heroSlides.length"
+      v-else-if="heroSlides.length"
       :images="heroSlides"
       :effect="hero.effect"
       :interval="hero.interval"
     />
     <!-- Foto statis fallback: desktop + versi HP (pola swap sama dengan mildness) -->
     <div
-      v-if="!heroSlides.length && background.photo"
+      v-else-if="background.photo"
       class="senja-hero__photo senja-hero__photo--desktop"
       :class="{ 'senja-hero__photo--swap': background.photo_mobile }"
       :style="{ backgroundImage: `url(${assetUrl(background.photo)})` }"
     />
     <div
-      v-if="!heroSlides.length && background.photo_mobile"
+      v-if="!hero.videoUrl && !heroSlides.length && background.photo_mobile"
       class="senja-hero__photo senja-hero__photo--mobile"
       :style="{ backgroundImage: `url(${assetUrl(background.photo_mobile)})` }"
     />

@@ -11,7 +11,7 @@
   --card-bg: var(--ov-card-bg, var(--t-paper));
   --card-radius: var(--ov-card-radius, 1.4rem);
   --card-shadow: var(--ov-card-shadow, 0 20px 45px -20px rgba(74, 35, 24, 0.4));
-  background: #2f1810;
+  background: var(--page-bg, #2f1810);
 }
 
 /* ===== KERANGKA DUA PANEL ===== */
@@ -30,18 +30,39 @@
   overflow: hidden;
   align-items: center;
   justify-content: center;
-  color: #f6e7d8;
-  /* --senja-left-bg: diisi inline dari admin (hero.senja_left_bg) kalau ada
-     -- kosong = fallback gradient asli di bawah ini, tema tetap tampil sama
-     persis tanpa pengaturan apa pun (lihat Layout.vue). */
+  color: var(--senja-left-text, #f6e7d8);
+  /* --senja-left-bg / --senja-left-text: diisi inline dari admin (Global
+     Tampilan > Split Layout, lihat InvitationLookResource) kalau ada --
+     kosong = fallback asli di bawah ini, tema tetap tampil sama persis
+     tanpa pengaturan apa pun (lihat Layout.vue). */
   background: var(
     --senja-left-bg,
     radial-gradient(120% 90% at 85% 20%, rgba(217, 160, 91, 0.18), transparent 55%),
     linear-gradient(165deg, #432013, #341409 70%)
   );
+  /* --senja-left-bg juga bisa berisi url(...) kalau admin upload foto --
+     background-size/position ini no-op untuk gradient, aktif untuk foto. */
+  background-size: cover;
+  background-position: center;
 }
 @media (min-width: 1024px) {
   .theme-senja .senja-left { display: flex; }
+}
+
+/* Video latar panel kiri (upload) -- menang atas foto/warna, lihat Layout.vue. */
+.theme-senja .senja-left__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* Peredup supaya teks tetap terbaca di atas foto/video (tidak dipakai untuk warna polos). */
+.theme-senja .senja-left__veil {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(30, 14, 8, 0.35), rgba(30, 14, 8, 0.55));
 }
 
 /* Titik cahaya senja (kunang-kunang) — murni CSS, tanpa aset. */
@@ -85,12 +106,12 @@
   font-family: var(--t-font-script);
   font-size: clamp(2.4rem, 3.6vw, 3.4rem);
   line-height: 1.15;
-  color: #fdf3e3;
+  color: var(--senja-left-text, #fdf3e3);
 }
 .theme-senja .senja-left__date {
   font-size: 0.95rem;
   letter-spacing: 0.06em;
-  color: var(--t-gold);
+  color: var(--senja-left-text, var(--t-gold));
 }
 .theme-senja .senja-left__rule {
   display: block;
@@ -116,7 +137,9 @@
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  background: linear-gradient(180deg, #fdf4e9, var(--t-paper) 25%);
+  background: var(--senja-right-bg, linear-gradient(180deg, #fdf4e9, var(--t-paper) 25%));
+  background-size: cover;
+  background-position: center top;
 }
 @media (min-width: 1024px) {
   .theme-senja .senja-right {
@@ -169,8 +192,12 @@
   text-align: center;
   color: #fdf3e3;
 }
+/* Ukuran & warna tiap elemen (v4) -- var(--hero-el-*, ...) datang dari
+   hero.elements.$key.size/color (lihat Cover.vue senja: elVars), sama pola
+   dengan Mildness. Fallback ke nilai bawaan Senja kalau admin belum isi. */
 .theme-senja .senja-hero__eyebrow {
-  font-size: 0.78rem;
+  font-size: var(--hero-el-eyebrow-size, 0.78rem);
+  color: var(--hero-el-eyebrow-color, inherit);
   letter-spacing: 0.16em;
   text-shadow: 0 1px 8px rgba(30, 12, 6, 0.5);
 }
@@ -184,14 +211,16 @@
   display: grid;
   gap: 0.15rem;
   font-family: var(--hero-name-font, var(--t-font-script));
-  font-size: clamp(2.5rem, 9vw, 3.2rem);
+  font-size: var(--hero-el-names-size, clamp(2.5rem, 9vw, 3.2rem));
+  color: var(--hero-el-names-color, inherit);
   line-height: 1.12;
   text-shadow: 0 2px 14px rgba(30, 12, 6, 0.55);
 }
 .theme-senja .senja-hero__amp { font-size: 0.62em; opacity: 0.9; }
 .theme-senja .senja-hero__date {
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: var(--hero-el-date-size, 0.85rem);
+  color: var(--hero-el-date-color, inherit);
   letter-spacing: 0.05em;
   text-shadow: 0 1px 8px rgba(30, 12, 6, 0.55);
 }
@@ -204,19 +233,19 @@
   border: 0;
   border-radius: 9999px;
   padding: 0.8rem 1.7rem;
-  font-size: 0.72rem;
+  font-size: var(--hero-el-button-size, 0.72rem);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  background: var(--t-btn-bg);
+  background: var(--hero-el-button-color, var(--t-btn-bg));
   color: var(--t-btn-text);
   box-shadow: 0 10px 24px -10px rgba(30, 12, 6, 0.6);
   transition: opacity 0.2s, transform 0.2s;
 }
 .theme-senja .senja-hero__btn:hover { opacity: 0.92; transform: translateY(-1px); }
 .theme-senja .senja-hero__btn-icon { width: 1rem; height: 1rem; }
-.theme-senja .senja-hero__guest { display: grid; gap: 0.1rem; }
-.theme-senja .senja-hero__guest small  { font-size: 0.7rem; letter-spacing: 0.12em; opacity: 0.85; }
-.theme-senja .senja-hero__guest strong { font-weight: 600; font-size: 0.95rem; }
+.theme-senja .senja-hero__guest { display: grid; gap: 0.1rem; color: var(--hero-el-guest-color, inherit); }
+.theme-senja .senja-hero__guest small  { font-size: var(--hero-el-guest-size, 0.7rem); letter-spacing: 0.12em; opacity: 0.85; }
+.theme-senja .senja-hero__guest strong { font-weight: 600; font-size: var(--hero-el-guest-size, 0.95rem); }
 
 /* ===== SECTIONS (panel kanan, setelah dibuka) ===== */
 .theme-senja .s-screen {
@@ -277,6 +306,92 @@
 .theme-senja .c-countdown__timer--circle .c-countdown__num   { color: #fff8ee; font-size: 1.02rem; }
 .theme-senja .c-countdown__timer--circle .c-countdown__label { color: rgba(255, 248, 238, 0.85); font-size: 8px; }
 
+/* 4 gaya lain (dulu tidak ada rule sama sekali -> keliatan sama semua, jadi
+   "Gaya angka" seolah tidak berefek). Ditulis pakai token CSS var (--t-*)
+   yang sama dengan Mildness, jadi otomatis mengikuti palet Senja sendiri
+   tanpa perlu warna hardcode baru. */
+.theme-senja .c-countdown__timer--boxed .c-countdown__box {
+  background: color-mix(in srgb, var(--t-paper) 78%, transparent);
+  border: 1px solid color-mix(in srgb, var(--t-accent) 30%, transparent);
+  border-radius: 0.8rem;
+  min-width: 62px;
+  padding: 0.6rem 0.5rem;
+  box-shadow: 0 8px 18px -12px color-mix(in srgb, var(--t-accent) 45%, transparent);
+}
+.theme-senja .c-countdown__timer--boxed .c-countdown__num { font-size: 1.6rem; }
+
+.theme-senja .c-countdown__timer--minimal { gap: 0.5rem; }
+.theme-senja .c-countdown__timer--minimal .c-countdown__box {
+  background: transparent;
+  padding: 0.2rem 0.4rem;
+  position: relative;
+}
+.theme-senja .c-countdown__timer--minimal .c-countdown__num { font-size: 2rem; }
+.theme-senja .c-countdown__timer--minimal .c-countdown__box:not(:last-child)::after {
+  content: ':';
+  position: absolute;
+  right: -0.5rem;
+  top: 0.3rem;
+  color: var(--t-gold);
+  font-family: var(--t-font-head);
+  font-size: 1.4rem;
+}
+
+.theme-senja .c-countdown__timer--pill {
+  gap: 0;
+  width: max-content;
+  max-width: 100%;
+  margin-inline: auto;
+  background: var(--t-accent);
+  border-radius: 9999px;
+  padding: 0.45rem 0.6rem;
+}
+.theme-senja .c-countdown__timer--pill .c-countdown__box {
+  background: transparent;
+  border-radius: 0;
+  min-width: 54px;
+  padding: 0.2rem 0.55rem;
+}
+.theme-senja .c-countdown__timer--pill .c-countdown__box:not(:last-child) {
+  border-right: 1px solid rgba(255, 255, 255, 0.25);
+}
+.theme-senja .c-countdown__timer--pill .c-countdown__num   { color: #fff; font-size: 1.25rem; }
+.theme-senja .c-countdown__timer--pill .c-countdown__label { color: rgba(255, 255, 255, 0.8); font-size: 8px; }
+
+.theme-senja .c-countdown__timer--flip .c-countdown__box {
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    var(--t-paper) 0 50%,
+    color-mix(in srgb, var(--t-paper) 82%, var(--t-accent)) 50% 100%
+  );
+  border-radius: 0.55rem;
+  min-width: 60px;
+  padding: 0.55rem 0.5rem;
+  box-shadow:
+    0 10px 20px -14px color-mix(in srgb, var(--t-accent) 55%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--t-accent) 18%, transparent);
+}
+.theme-senja .c-countdown__timer--flip .c-countdown__box::after {
+  content: '';
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: 50%;
+  height: 1px;
+  background: color-mix(in srgb, var(--t-accent) 22%, transparent);
+}
+.theme-senja .c-countdown__timer--flip .c-countdown__num { font-size: 1.55rem; }
+
+/* Di dalam hero (foto gelap): box translucent generik (baris di bawah) sudah
+   menutupi boxed/minimal/pill/flip; PILL & FLIP override tambahan supaya tetap
+   kontras & terbaca di atas foto senja (bukan latar putih/aksen solid). */
+.theme-senja .senja-hero .c-countdown__timer--pill { background: rgba(255, 248, 238, 0.22); }
+.theme-senja .senja-hero .c-countdown__timer--flip .c-countdown__box {
+  background: rgba(255, 248, 238, 0.16);
+  box-shadow: none;
+}
+
 /* Di dalam hero (teks di atas foto), eyebrow & label countdown ikut krem. */
 .theme-senja .senja-hero .c-countdown__eyebrow { color: rgba(253, 243, 227, 0.9); }
 .theme-senja .senja-hero .c-countdown__num     { color: #fff8ee; }
@@ -287,24 +402,9 @@
 }
 
 
-/* ============================================================
-   POSISI KONTEN HERO (v3) — senja-hero--split|center|bottom|left.
-   'split' = perilaku default (eyebrow atas, konten bawah).
-   ============================================================ */
-.theme-senja .senja-hero--center .senja-hero__content {
-  justify-content: center;
-  gap: 1.2rem;
-}
-.theme-senja .senja-hero--center .senja-hero__bottom { margin-top: 0; }
-.theme-senja .senja-hero--bottom .senja-hero__content { justify-content: flex-end; }
-.theme-senja .senja-hero--bottom .senja-hero__eyebrow { display: none; }
-.theme-senja .senja-hero--left .senja-hero__content {
-  justify-content: flex-end;
-  align-items: flex-start;
-  text-align: left;
-}
-.theme-senja .senja-hero--left .senja-hero__names { align-items: flex-start; }
-.theme-senja .senja-hero--left .senja-hero__bottom { align-items: flex-start; }
+/* "Posisi konten hero" DIHAPUS (v6, 2026-07-22) -- tidak pernah kelihatan
+   efeknya di sisi user. senja-hero__content bawaan sudah rapi (eyebrow atas,
+   konten bawah, rata tengah horizontal). */
 
 /* DRESSCODE di hero (v3) — di bawah countdown. */
 .theme-senja .senja-hero__dresscode {
@@ -314,13 +414,14 @@
 }
 .theme-senja .senja-hero--left .senja-hero__dresscode { justify-items: flex-start; }
 .theme-senja .senja-hero__dresscode small {
-  font-size: 10px;
+  font-size: var(--hero-el-dresscode-size, 10px);
   letter-spacing: 0.35em;
   text-transform: uppercase;
-  color: var(--t-gold);
+  color: var(--hero-el-dresscode-color, var(--t-gold));
 }
 .theme-senja .senja-hero__dresscode span {
-  font-size: 0.9rem;
+  font-size: var(--hero-el-dresscode-size, 0.9rem);
   font-style: italic;
   font-family: var(--t-font-head);
+  color: var(--hero-el-dresscode-color, inherit);
 }

@@ -17,16 +17,16 @@
  *   Tanpa slot, section dirender polos.
  */
 import { computed } from 'vue';
-import CountdownSection from '../themes/_core/sections/CountdownSection.vue';
-import CoupleSection from '../themes/_core/sections/CoupleSection.vue';
-import EventSection from '../themes/_core/sections/EventSection.vue';
-import CoHostSection from '../themes/_core/sections/CoHostSection.vue';
-import LoveStorySection from '../themes/_core/sections/LoveStorySection.vue';
-import GallerySection from '../themes/_core/sections/GallerySection.vue';
-import VideoSection from '../themes/_core/sections/VideoSection.vue';
-import RsvpSection from '../themes/_core/sections/RsvpSection.vue';
-import GuestbookSection from '../themes/_core/sections/GuestbookSection.vue';
-import GiftSection from '../themes/_core/sections/GiftSection.vue';
+import CountdownSection from '../themes/_core/sections/countdown/CountdownSection.vue';
+import CoupleSection from '../themes/_core/sections/couple/CoupleSection.vue';
+import EventSection from '../themes/_core/sections/events/EventSection.vue';
+import CoHostSection from '../themes/_core/sections/co_host/CoHostSection.vue';
+import LoveStorySection from '../themes/_core/sections/love_story/LoveStorySection.vue';
+import GallerySection from '../themes/_core/sections/gallery/GallerySection.vue';
+import VideoSection from '../themes/_core/sections/video/VideoSection.vue';
+import RsvpSection from '../themes/_core/sections/rsvp/RsvpSection.vue';
+import GuestbookSection from '../themes/_core/sections/guestbook/GuestbookSection.vue';
+import GiftSection from '../themes/_core/sections/gift/GiftSection.vue';
 
 const props = defineProps({
   ctx:       { type: Object, required: true },
@@ -55,13 +55,13 @@ function propsFor(key) {
     case 'countdown':  return { event: c.invitation.events?.[0], invitation: c.invitation, labels: c.labels, opts: c.countdown ?? {} };
     case 'couple':     return { invitation: c.invitation, opts: to.couple ?? {} };
     case 'events':     return { events: c.invitation.events, labels: c.labels, showMaps: c.can.maps, styleName: to.events?.style ?? 'card' };
-    case 'co_host':    return { coHosts: c.invitation.co_hosts, labels: c.labels };
+    case 'co_host':    return { coHosts: c.invitation.co_hosts, labels: c.labels, styleName: to.co_host?.style ?? 'classic' };
     case 'love_story': return { stories: c.invitation.stories, labels: c.labels, showPhotos: to.love_story?.show_photos ?? false, styleName: to.love_story?.style ?? 'stacked' };
-    case 'gallery':    return { photos: c.invitation.photos, labels: c.labels, styleName: to.gallery?.style ?? 'carousel' };
+    case 'gallery':    return { photos: c.invitation.photos, labels: c.labels, styleName: to.gallery?.style ?? 'carousel', caption: to.gallery?.caption ?? '' };
     case 'video':      return { videoUrl: c.invitation.video_url, labels: c.labels, invitation: c.invitation, opts: to.video ?? {} };
-    case 'rsvp':       return { slug: c.slug, guestName: c.guestName, labels: c.labels };
-    case 'guestbook':  return { slug: c.slug, guestName: c.guestName, guestbook: c.guestbook, labels: c.labels };
-    case 'gift':       return { gifts: c.invitation.gifts, labels: c.labels };
+    case 'rsvp':       return { slug: c.slug, guestName: c.guestName, labels: c.labels, styleName: to.rsvp?.style ?? 'card' };
+    case 'guestbook':  return { slug: c.slug, guestName: c.guestName, guestbook: c.guestbook, labels: c.labels, styleName: to.guestbook?.style ?? 'list' };
+    case 'gift':       return { gifts: c.invitation.gifts, labels: c.labels, styleName: to.gift?.style ?? 'panel' };
     default:           return {};
   }
 }

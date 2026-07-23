@@ -6,7 +6,7 @@
 
 .theme-mildness {
   /* backdrop biru lembut di belakang kartu */
-  background: linear-gradient(180deg, #dce7f0, #eef3f8 30%, #eef3f8 70%, #dce7f0);
+  background: var(--page-bg, linear-gradient(180deg, #dce7f0, #eef3f8 30%, #eef3f8 70%, #dce7f0));
 
   /* kartu mengambang (dipakai FloatingCard global).
      Mengonsumsi override admin dari Filament (--ov-*) dengan fallback ke
@@ -80,6 +80,40 @@
 .theme-mildness .m-screen--short {
   min-height: 0;
   padding-top: 1rem;
+}
+
+/* HERO (sampul) khusus: TIDAK BOLEH memicu scroll halaman (beda dari
+   section konten lain yang boleh tumbuh kalau isinya panjang). height tetap
+   (bukan min-height) + overflow:hidden mengunci satu layar penuh; gap/padding
+   dikecilkan di viewport pendek (@media max-height) supaya konten realistis
+   (nama+tanggal+countdown+dresscode+tombol) tetap muat tanpa terpotong. */
+.theme-mildness .m-hero-screen {
+  height: 100vh;
+  height: 100svh;
+  min-height: 0;
+  max-height: 100svh;
+  overflow: hidden;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+@media (max-height: 720px) {
+  .theme-mildness .m-hero-screen .mild-cover,
+  .theme-mildness .m-hero-screen .mild-arch,
+  .theme-mildness .m-hero-screen .mild-monogram,
+  .theme-mildness .m-hero-screen .mild-polaroid {
+    gap: 0.5rem !important;
+  }
+  .theme-mildness .m-hero-screen .mild-cover__framed,
+  .theme-mildness .m-hero-screen .mild-cover__split,
+  .theme-mildness .m-hero-screen .mild-arch,
+  .theme-mildness .m-hero-screen .mild-polaroid {
+    height: 5.5rem !important;
+    max-height: 20vh;
+  }
+}
+@media (max-height: 600px) {
+  .theme-mildness .m-hero-screen h1 { font-size: 1.5rem !important; }
+  .theme-mildness .m-hero-screen .mild-dresscode { display: none; }
 }
 
 /* Mode tanpa kartu + background foto per-section: beri selubung putih
@@ -222,27 +256,6 @@
   .theme-mildness .m-bg-photo--desktop.m-bg-photo--swap { display: none; }
 }
 
-/* ============================================================
-   POSISI KONTEN HERO (v3) — berlaku saat hero TANPA kartu (full-foto).
-   Dipasang di <section> hero: m-hero--split|center|bottom|left.
-   'split' = perilaku default (tengah); lainnya menggeser flex container.
-   ============================================================ */
-.theme-mildness .m-screen.m-hero--center { align-items: center; }
-.theme-mildness .m-screen.m-hero--bottom {
-  align-items: flex-end;
-  padding-bottom: 4.5rem;
-}
-.theme-mildness .m-screen.m-hero--left {
-  align-items: flex-end;
-  justify-content: flex-start;
-  padding-bottom: 4.5rem;
-  padding-left: 1.5rem;
-}
-.theme-mildness .m-screen.m-hero--left .m-frame {
-  margin-inline: 0;
-  text-align: left;
-}
-.theme-mildness .m-screen.m-hero--left .mild-cover {
-  align-items: flex-start;
-  text-align: left;
-}
+/* "Posisi konten hero" DIHAPUS (v6, 2026-07-22) -- tidak pernah kelihatan
+   efeknya di sisi user, default sekarang selalu rata tengah (.m-screen sudah
+   align-items/justify-content: center secara bawaan). */

@@ -1,12 +1,20 @@
 <script setup>
 /** Section 4 — Countdown (isi). */
 import SectionDisplayFields from '../SectionDisplayFields.vue';
+import SectionElementStyleFields from '../SectionElementStyleFields.vue';
 
 defineProps({
   form: { type: Object, required: true },
   invitationId: { type: [Number, String], required: true },
   handleUpload: { type: Function, required: true },
 });
+
+const ELEMENTS = [
+  ['eyebrow', 'Label "Menuju hari bahagia"'],
+  ['date', 'Tanggal (khusus isi "Tanggal")'],
+  ['quote', 'Kutipan (khusus isi "Kutipan")'],
+  ['label', 'Label Hari/Jam/Menit/Detik'],
+];
 </script>
 
 <template>
@@ -38,6 +46,13 @@ defineProps({
       </div>
       <textarea v-if="form.theme_options.countdown.layout === 'quote'" v-model="form.theme_options.countdown.quote" class="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800 sm:col-span-2" rows="2" placeholder="Teks kutipan" />
     </div>
-    <SectionDisplayFields class="mt-3" :section="form.theme_options.sections.countdown" :invitation-id="invitationId" />
+    <SectionElementStyleFields class="mt-3" :elements="form.theme_options.sections.countdown.elements" :list="ELEMENTS" />
+    <SectionDisplayFields
+      class="mt-3"
+      :section="form.theme_options.sections.countdown"
+      :section-bg="form.theme_options.section_bg.countdown"
+      :invitation-id="invitationId"
+      @update:section-bg="form.theme_options.section_bg.countdown = $event"
+    />
   </details>
 </template>

@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "../shared/stores/auth";
+import { useSkripsiAuthStore } from "../modules/skripsi/stores/auth";
 
 /**
  * ROUTER SADAR-DOMAIN.
@@ -13,7 +14,7 @@ import { useAuthStore } from "../shared/stores/auth";
 // const CENTRAL_HOSTS = (import.meta.env.VITE_CENTRAL_HOSTS || 'rizky.test,localhost,127.0.0.1')
 const CENTRAL_HOSTS = (
   import.meta.env.VITE_CENTRAL_HOSTS ||
-  "rizky.test,localhost,127.0.0.1,192.168.0.107,192.168.0.84,192.168.1.109,10.140.125.222"
+  "rizky.test,localhost,127.0.0.1,192.168.0.107,192.168.0.84,192.168.1.109,10.117.7.222,192.168.56.1"
 ) //tambah host ip
   .split(",")
   .map((h) => h.trim());
@@ -120,6 +121,40 @@ const centralRoutes = [
     name: "invitation.preview",
     component: () => import("../modules/invitation/pages/InvitationPublic.vue"),
   },
+  // Project Skripsi (SPK/ML) — auth & data terpisah dari produk lain
+  {
+    path: "/skripsi/login",
+    name: "skripsi.login",
+    component: () => import("../modules/skripsi/pages/Login.vue"),
+  },
+  {
+    path: "/skripsi/register",
+    name: "skripsi.register",
+    component: () => import("../modules/skripsi/pages/Register.vue"),
+  },
+  {
+    path: "/skripsi/dashboard",
+    name: "skripsi.dashboard",
+    component: () => import("../modules/skripsi/pages/Dashboard.vue"),
+    meta: { skripsiAuth: true },
+  },
+  {
+    path: "/skripsi/cases",
+    name: "skripsi.cases",
+    component: () => import("../modules/skripsi/pages/CasesList.vue"),
+    meta: { skripsiAuth: true },
+  },
+  {
+    path: "/skripsi/saw/:id",
+    name: "skripsi.saw.detail",
+    component: () => import("../modules/skripsi/saw/pages/CaseDetail.vue"),
+    meta: { skripsiAuth: true },
+  },
+  {
+    path: "/skripsi/algoritma/saw",
+    name: "skripsi.algoritma.saw",
+    component: () => import("../modules/skripsi/saw/pages/AlgoritmaSaw.vue"),
+  },
 ];
 
 // Route saat diakses dari subdomain tenant / custom domain -> seluruh situs = undangan
@@ -137,6 +172,14 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to) => {
+  if (to.meta.skripsiAuth) {
+    const skripsiAuth = useSkripsiAuthStore();
+    if (!skripsiAuth.loaded) await skripsiAuth.fetchMe();
+    if (!skripsiAuth.isLoggedIn)
+      return { name: "skripsi.login", query: { redirect: to.fullPath } };
+    return true;
+  }
+
   if (!to.meta.auth) return true;
   const auth = useAuthStore();
   if (!auth.loaded) await auth.fetchMe();

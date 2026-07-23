@@ -1,10 +1,23 @@
 <script setup>
-/** Global — Tata Letak & Kartu Default, Floral 4 Sudut, Animasi Scroll. */
+/** Global — Tata Letak & Kartu Default, Background Foto/Video Halaman, Floral 4 Sudut, Animasi Scroll. */
+import { ref, watch } from 'vue';
 import { CARD_STYLES } from '../../composables/invitationFormOptions';
 
-defineProps({
+const props = defineProps({
   form: { type: Object, required: true },
+  uploading: { type: Object, required: true },
   handleUpload: { type: Function, required: true },
+  handleSlideshowUpload: { type: Function, required: true },
+});
+
+/* Sumber background halaman/hero: foto+slideshow ATAU video -- SALING
+   EKSKLUSIF (sama seperti Filament v4). Dipakai di 2 tempat: latar tetap di
+   belakang seluruh halaman, DAN foto berbingkai untuk gaya hero
+   Framed/Split/Custom/Arch/Polaroid (lihat tab Hero). */
+const bgSource = ref(props.form.theme_options.hero.video_url ? 'video' : 'slideshow');
+watch(bgSource, (v) => {
+  if (v === 'video') props.form.theme_options.hero.slideshow = [];
+  else props.form.theme_options.hero.video_url = '';
 });
 </script>
 
@@ -12,6 +25,10 @@ defineProps({
   <details class="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
     <summary class="cursor-pointer font-medium">Global — Tata Letak &amp; Kartu Default</summary>
     <div class="mt-3 grid gap-2 sm:grid-cols-3">
+      <div>
+        <label class="mb-1 block text-xs opacity-70">Warna background halaman</label>
+        <input v-model="form.theme_options.background.color" type="color" class="h-9 w-full rounded-lg border border-slate-200 dark:border-slate-700" />
+      </div>
       <label class="flex items-center gap-2 text-sm">
         <input v-model="form.theme_options.layout.card" type="checkbox" /> Kartu untuk section konten (default)
       </label>
@@ -55,6 +72,60 @@ defineProps({
       <div v-for="corner in ['radius_tl', 'radius_tr', 'radius_bl', 'radius_br']" :key="corner">
         <label class="mb-1 block text-xs opacity-70">Radius {{ corner.replace('radius_', '') }} (px)</label>
         <input v-model.number="form.theme_options.card[corner]" type="number" min="0" max="120" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800" />
+      </div>
+    </div>
+  </details>
+
+  <details open class="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
+    <summary class="cursor-pointer font-medium">Global — Background Foto/Video Halaman</summary>
+    <p class="mt-2 text-xs opacity-60">
+      Latar TETAP di belakang seluruh halaman (BUKAN foto berbingkai hero -- itu field terpisah di section Hero).
+      Pilih SATU sumber -- ganti sumber otomatis mengosongkan yang lain.
+    </p>
+    <div class="mt-3 flex items-center gap-4 text-sm">
+      <label class="flex items-center gap-1"><input v-model="bgSource" type="radio" value="slideshow" /> Foto / Slideshow</label>
+      <label class="flex items-center gap-1"><input v-model="bgSource" type="radio" value="video" /> Video</label>
+    </div>
+
+    <div v-if="bgSource === 'slideshow'" class="mt-3 grid gap-2 sm:grid-cols-2">
+      <div class="sm:col-span-2">
+        <label class="mb-1 block text-xs opacity-70">Slideshow background (maks 3 foto)</label>
+        <input type="file" accept="image/*" multiple class="text-sm" @change="handleSlideshowUpload" />
+        <span v-if="uploading.slideshow" class="ml-2 text-xs opacity-60">Mengunggah…</span>
+        <span v-else-if="form.theme_options.hero.slideshow.length" class="ml-2 text-xs opacity-60">{{ form.theme_options.hero.slideshow.length }} foto tersimpan</span>
+      </div>
+      <div>
+        <label class="mb-1 block text-xs opacity-70">Efek pergantian</label>
+        <select v-model="form.theme_options.hero.effect" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800">
+          <option value="fade">Fade</option>
+          <option value="kenburns">Ken Burns</option>
+        </select>
+      </div>
+      <div>
+        <label class="mb-1 block text-xs opacity-70">Jeda per foto (detik)</label>
+        <input v-model.number="form.theme_options.hero.interval" type="number" min="4" max="12" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800" />
+      </div>
+    </div>
+
+    <div v-else class="mt-3 grid gap-2 sm:grid-cols-2">
+      <div class="sm:col-span-2">
+        <label class="mb-1 block text-xs opacity-70">Background Video (upload .mp4)</label>
+        <input type="file" accept="video/mp4" class="text-sm" @change="handleUpload($event, 'videos', (p) => form.theme_options.hero.video_url = p)" />
+        <p class="mt-1 text-[11px] opacity-60">Maks. 50MB.</p>
+      </div>
+      <div>
+        <label class="mb-1 block text-xs opacity-70">Efek video</label>
+        <select v-model="form.theme_options.hero.video_effect" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800">
+          <option value="">Tanpa efek</option>
+          <option value="sepia">Sepia</option>
+          <option value="bw">Hitam-putih</option>
+          <option value="vintage">Vintage</option>
+          <option value="blur">Blur lembut</option>
+          <option value="brightness">Lebih terang</option>
+          <option value="contrast">Kontras tinggi</option>
+          <option value="saturate">Saturasi tinggi</option>
+          <option value="hue-rotate">Hue-rotate</option>
+        </select>
       </div>
     </div>
   </details>

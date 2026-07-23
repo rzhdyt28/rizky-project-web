@@ -32,7 +32,7 @@ const theme = computed(() =>
 );
 const tokens = computed(() => theme.value.tokens);
 
-const { cssVars, can, sectionOrder, labels, cover, florals, background, layoutOpts, sectionBg, sectionHeight, countdown, animation, sectionCard, sectionFontVars, hero } =
+const { cssVars, can, sectionOrder, labels, cover, florals, background, layoutOpts, sectionBg, sectionHeight, countdown, animation, sectionCard, sectionFontVars, sectionCardBgPhoto, hero } =
   useThemeOptions(invitation, features, tokens);
 
 const ThemeLayout = computed(() => theme.value.layout);
@@ -60,20 +60,39 @@ function injectStylesheet(href) {
   document.head.appendChild(link);
 }
 
+/* Font PER-ELEMEN (v5, "Tipografi, Ukuran & Warna tiap elemen teks section/
+   hero") disimpan di hero.elements.*.font & sections.*.elements.*.font --
+   HARUS ikut dikumpulkan di sini juga, kalau tidak var(--el-*-font)/
+   var(--hero-el-*-font) di CSS cuma menunjuk font yang TIDAK PERNAH dimuat
+   filenya (browser diam-diam jatuh ke font sistem, kelihatan "tidak
+   berefek" walau CSS-nya sendiri sudah benar). */
+function collectElementFonts(elementsMap) {
+  const out = [];
+  for (const el of Object.values(elementsMap ?? {})) {
+    if (el?.font) out.push(el.font);
+  }
+  return out;
+}
+
 watchEffect(() => {
   if (!invitation.value) return;
-  const optFonts = invitation.value.theme_options?.fonts ?? {};
+  const opts = invitation.value.theme_options ?? {};
+  const optFonts = opts.fonts ?? {};
   const tokFonts = tokens.value?.fonts ?? {};
 
   // 1) Stylesheet kustom (Adobe Fonts / self-host @font-face)
   if (optFonts.css_url) injectStylesheet(optFonts.css_url);
 
-  // 2) Nilai efektif tiap slot (override admin > token tema), lalu muat
-  //    yang belum ter-preload dari Google Fonts dalam SATU request.
+  // 2) Nilai efektif tiap slot (override admin > token tema) + font per-elemen
+  //    hero & tiap section, lalu muat yang belum ter-preload dari Google
+  //    Fonts dalam SATU request.
+  const sectionFonts = Object.values(opts.sections ?? {}).flatMap((s) => collectElementFonts(s?.elements));
   const families = [
     optFonts.heading ?? tokFonts.heading,
     optFonts.body ?? tokFonts.body,
     optFonts.script ?? tokFonts.script,
+    ...collectElementFonts(opts.hero?.elements),
+    ...sectionFonts,
   ].filter((f) => f && !PRELOADED.includes(f));
 
   if (families.length) {
@@ -116,6 +135,7 @@ watchEffect(() => {
       :section-height="sectionHeight"
       :section-card="sectionCard"
       :section-font-vars="sectionFontVars"
+      :section-card-bg-photo="sectionCardBgPhoto"
       :hero="hero"
       :countdown="countdown"
       :animation="animation"

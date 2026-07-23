@@ -108,7 +108,15 @@ export function useThemeOptions(invitationRef, featuresRef, tokensRef) {
       guestbook:  (sec.guestbook?.visible ?? true)
                     && (invitationRef.value?.guestbook_enabled ?? true),
       gift:       on('gift'),
-      maps:       feat.maps ?? false,
+      /* Embed peta (iframe) -- butuh fitur paket 'maps' AKTIF, DAN admin belum
+         mematikannya untuk undangan ini (default_options.events.show_maps --
+         PERHATIKAN: ini opts.value.events, BUKAN opts.value.sections.events
+         yang isinya visible/card/bg untuk section Acara, objek BEDA sama
+         sekali -- bug lama baca path yang salah sehingga toggle ini tidak
+         pernah berefek). Dimatikan admin ATAU paket tak punya fitur ini ->
+         EventStyle*.vue otomatis jatuh ke tombol "Lihat lokasi" langsung ke
+         app peta (bukan hilang total -- lihat EventStyleCard.vue). */
+      maps:       (feat.maps ?? false) && (opts.value.events?.show_maps ?? true),
       music:      (feat.music ?? false) && !!invitationRef.value?.music_url,
       branding:   !(feat.remove_branding ?? false),
     };
@@ -177,6 +185,7 @@ export function useThemeOptions(invitationRef, featuresRef, tokensRef) {
       photo:        b.photo ?? null,
       photo_mobile: b.photo_mobile ?? null, // potret 9:16 khusus layar HP
       ornament:     b.ornament_upload ?? b.ornament_asset ?? b.ornament ?? null,
+      color:        b.color || null, // warna latar HALAMAN penuh (Global Tampilan > Full Layout)
     };
   });
 
@@ -209,36 +218,58 @@ export function useThemeOptions(invitationRef, featuresRef, tokensRef) {
   const sectionHeight = (key) => opts.value.sections?.[key]?.height || layoutOpts.value.sectionHeight;
 
   /**
-   * TIPOGRAFI PER-SECTION (sections.{key}.font_heading/title_size/title_color/
-   * font_body/body_size/body_color), kosong = ikut nilai global (Global —
-   * Tipografi). Dipasang sebagai :style pada wrapper section (digabung
-   * dengan style lain).
+   * UKURAN & WARNA TIAP ELEMEN TEKS SECTION (v4, 2026-07-22) — MENGGANTIKAN
+   * field generik lama "Font/Ukuran/Warna Judul & Isi" per-section (dihapus,
+   * lihat InvitationLookResource::sectionDisplayFields()) yang dirasa tumpang
+   * tindih dan efeknya kurang terlihat. Sekarang tiap section punya daftar
+   * ELEMEN BERNAMA sendiri (mis. countdown: eyebrow/date/quote/label; couple:
+   * eyebrow/names/parents), masing-masing size+color independen, disimpan di
+   * sections.{key}.elements.{elKey}.{size,color} — pola identik dengan
+   * hero.elements yang sudah lebih dulu ada (lihat Cover.vue mildness).
    *
-   * DUA MEKANISME BERBEDA, sengaja:
-   * - JUDUL (--t-font-head, --ov-title-size, --ov-title-color): custom
-   *   property CSS. Aman di-override di sini karena elemen judul di seluruh
-   *   section (SectionWrapper h3, theme.css tiap tema) MEMBACA ULANG var()
-   *   ini di posisinya masing-masing — override di wrapper section otomatis
-   *   "menang" untuk semua anak di bawahnya.
-   * - ISI (font_body/body_size/body_color): --t-font-body/--ov-body-size/
-   *   --ov-body-color HANYA dibaca SATU KALI di root <Layout> (bukan di
-   *   tiap section), jadi override var lewat wrapper section TIDAK akan
-   *   pernah terlihat (nothing downstream re-reads it). Makanya untuk isi,
-   *   properti CSS asli (fontFamily/fontSize/color) di-set LANGSUNG di sini
-   *   — inheritance biasa yang membawanya ke semua anak section ini,
-   *   persis mekanisme yang dipakai root Layout sendiri.
+   * Elemen KHUSUS "title" MENIMPA channel --ov-title-(size|color) / --t-font-head yang
+   * SUDAH dibaca SectionWrapper h3 (tidak perlu var baru) -- jadi styling
+   * judul section tetap jalan lewat mekanisme lama, cuma sumber datanya kini
+   * dari elements.title, bukan field title_size/title_color terpisah.
+   * Elemen lain dapat var generik --el-{elKey}-color/--el-{elKey}-size, WAJIB
+   * dikonsumsi tiap *Style*.vue lewat fallback chain, mis.
+   * `color: var(--el-eyebrow-color, var(--t-gold))`.
+   *
+   * Dipasang sebagai :style pada wrapper <section> (sama seperti bg_color) --
+   * custom property mewarisi ke semua anak apa pun kedalaman komponennya.
    */
   const sectionFontVars = (key) => {
     const sec = opts.value.sections?.[key] ?? {};
     const vars = {};
-    if (sec.font_heading) vars['--t-font-head']    = `'${sec.font_heading}', serif`;
-    if (sec.title_size)   vars['--ov-title-size']  = `${sec.title_size}px`;
-    if (sec.title_color)  vars['--ov-title-color'] = sec.title_color;
-    if (sec.font_body)  vars.fontFamily = `'${sec.font_body}', sans-serif`;
-    if (sec.body_size)  vars.fontSize   = `${sec.body_size}px`;
-    if (sec.body_color) vars.color      = sec.body_color;
+    const els = sec.elements ?? {};
+    for (const [elKey, el] of Object.entries(els)) {
+      if (!el) continue;
+      if (elKey === 'title') {
+        if (el.font)  vars['--t-font-head']    = `'${el.font}', serif`;
+        if (el.size)  vars['--ov-title-size']  = `${el.size}px`;
+        if (el.color) vars['--ov-title-color'] = el.color;
+        continue;
+      }
+      if (el.font)  vars[`--el-${elKey}-font`]  = `'${el.font}', sans-serif`;
+      if (el.size)  vars[`--el-${elKey}-size`]  = `${el.size}px`;
+      if (el.color) vars[`--el-${elKey}-color`] = el.color;
+    }
+    if (sec.bg_color) vars.backgroundColor = sec.bg_color;
+    /* Warna KARTU khusus section ini (sections.{key}.card_bg) -- menimpa
+       --ov-card-bg global HANYA di dalam subtree section ini, lewat
+       inheritance biasa (var yang di-set lebih dekat "menang" untuk semua
+       anak, termasuk FloatingCard section ini), tanpa perlu var terpisah. */
+    if (sec.card_bg) vars['--ov-card-bg'] = sec.card_bg;
     return vars;
   };
+
+  /**
+   * Foto KHUSUS di dalam kartu (v5, sections.{key}.card_bg_photo) -- upload
+   * TERPISAH dari section_bg (yang khusus mode tanpa-kartu). Hanya relevan
+   * saat section ini BERKARTU (dicek gabungan dengan sectionCard(key).use
+   * oleh pemanggil, lihat Layout.vue cardPhotoUrl()).
+   */
+  const sectionCardBgPhoto = (key) => opts.value.sections?.[key]?.card_bg_photo || null;
 
   /**
    * KARTU PER-SECTION (v3, bisa DI-MIX): sections.{key}.card = 'on'|'off'
@@ -264,10 +295,21 @@ export function useThemeOptions(invitationRef, featuresRef, tokensRef) {
     return {
       style:            h.style ?? 'classic',              // classic|framed|split|minimal|custom
       elements:         h.elements ?? {},                 // mode 'custom': { [key]: { order, align } }
-      position:         h.position ?? 'split',            // split|center|bottom|left
+      // Kompat data lama: field "Font nama pasangan di hero" sudah dihapus dari
+      // form (digantikan elements.names.font), tapi undangan lama yang cuma
+      // sempat isi field lama ini tetap harus tampil fontnya.
+      nameFont:         h.name_font || null,
+      // Foto berbingkai (Framed/Split/Custom/Arch/Polaroid) -- field TERPISAH
+      // dari background halaman (slideshow/video_url di bawah).
+      framedPhoto:      h.framed_photo || null,
       slideshow:        Array.isArray(h.slideshow) ? h.slideshow.filter(Boolean).slice(0, 3) : [],
       effect:           h.effect ?? 'fade',               // fade|kenburns
       interval:         Math.min(12, Math.max(4, Number(h.interval) || 6)),
+      // Background video -- saling eksklusif dengan slideshow (video menang
+      // kalau diisi, lihat InvitationLookResource: field slideshow & video_url
+      // saling toggle visible()).
+      videoUrl:         h.video_url || null,
+      videoEffect:      h.video_effect ?? 'none',
       dresscodeEnabled: !!h.dresscode_enabled,
       dresscode:        h.dresscode ?? '',
       cardStyle:        h.card_style ?? opts.value.card?.style ?? 'default',
@@ -275,6 +317,13 @@ export function useThemeOptions(invitationRef, featuresRef, tokensRef) {
       // themes/senja/Layout.vue + InvitationLookResource). null = tema lain
       // abaikan ini / Senja jatuh ke gradient asli di theme.css.
       senjaLeftBg:      h.senja_left_bg || null,
+      senjaRightBg:     h.senja_right_bg || null,
+      senjaLeftText:    h.senja_left_text || null,
+      // Foto/video menang atas warna (lihat senja/Layout.vue) -- urutan
+      // prioritas panel kiri: video > foto > warna/gradient asli.
+      senjaLeftPhoto:   h.senja_left_photo || null,
+      senjaLeftVideo:   h.senja_left_video || null,
+      senjaRightPhoto:  h.senja_right_photo || null,
     };
   });
 
@@ -292,7 +341,7 @@ export function useThemeOptions(invitationRef, featuresRef, tokensRef) {
   /** Preset animasi scroll GSAP (lihat composables/useReveal.js). */
   const animation = computed(() => opts.value.animation?.preset ?? 'fade-up');
 
-  return { cssVars, can, sectionOrder, labels, cover, florals, background, layoutOpts, sectionBg, sectionHeight, sectionCard, sectionFontVars, hero, countdown, animation };
+  return { cssVars, can, sectionOrder, labels, cover, florals, background, layoutOpts, sectionBg, sectionHeight, sectionCard, sectionFontVars, sectionCardBgPhoto, hero, countdown, animation };
 }
 
 /** '#rrggbb' + opacity(0-100) -> 'rgba(...)'. Nilai tak valid dikembalikan apa adanya. */

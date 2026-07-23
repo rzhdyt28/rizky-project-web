@@ -10,6 +10,9 @@
 defineProps({
   as:      { type: String, default: 'div' },
   variant: { type: String, default: 'default' },
+  /* URL foto (sudah di-resolve assetUrl oleh pemanggil) untuk mode "Foto di
+     dalam kartu" per-section (theme_options.sections.$key.card_photo_mode). */
+  photo:   { type: String, default: null },
 });
 </script>
 
@@ -17,13 +20,27 @@ defineProps({
   <component
     :is="as"
     class="g-card"
-    :class="variant !== 'default' ? `g-card--${variant}` : null"
+    :class="[variant !== 'default' ? `g-card--${variant}` : null, photo ? 'g-card--photo' : null]"
+    :style="photo ? { backgroundImage: `url(${photo})`, backgroundSize: 'cover', backgroundPosition: 'center' } : null"
   >
-    <slot />
+    <div class="g-card__inner">
+      <slot />
+    </div>
   </component>
 </template>
 
 <style scoped>
+/* Foto DI DALAM kartu ("Foto di dalam kartu" per section di Filament):
+   ::before jadi scrim gelap tipis di atas foto supaya isi (judul/teks) tetap
+   terbaca, konten asli didorong ke lapis atas lewat .g-card__inner. */
+.g-card--photo { position: relative; color: #fff; }
+.g-card--photo::before {
+  content: '';
+  position: absolute; inset: 0; z-index: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.6) 100%);
+}
+.g-card__inner { position: relative; z-index: 1; }
+
 .g-card {
   overflow: hidden;
   /* Prioritas: override admin (--ov-*) > default tema (--card-*) > default global.
@@ -44,29 +61,32 @@ defineProps({
    Tiap varian menimpa background/border/shadow-nya sendiri, tapi tetap
    menghormati override warna admin (--ov-card-bg) bila diisi. */
 
-/* GLASS — kaca buram: paling terlihat di atas foto Background Halaman.
-   Sengaja TIDAK memakai --ov-card-bg (warna/opacity kartu global): warna
-   itu untuk gaya 'default'/'flat' (kartu solid), sedangkan glass identik
-   dengan efek buram-nya sendiri — kalau --ov-card-bg dipaksakan di sini,
-   memilih "Glass" jadi terlihat sama saja dengan gaya lain saat admin sudah
-   mengisi warna/opacity global (bug: ganti gaya kartu tidak kelihatan). */
+/* GLASS — kaca buram. Warna kartu (--ov-card-bg) dipakai sebagai TINT dasar
+   di balik efek blur (bukan warna solid penuh) supaya "Warna Kartu" tetap
+   kelihatan berubah, tapi ciri khas glass (buram/transparan) tidak hilang.
+   Saturate diturunkan (dari 1.25 -> 1.05) supaya warna tint admin lebih
+   DOMINAN dibanding warna-warna dari background foto/video yang nge-blur
+   di baliknya -- kalau butuh 100% solid tanpa campuran latar sama sekali,
+   pakai override "Warna kartu section ini" (per-section) atau gaya
+   Default/Flat. */
 .g-card--glass {
-  background: rgba(255, 255, 255, 0.16);
-  -webkit-backdrop-filter: blur(14px) saturate(1.25);
-  backdrop-filter: blur(14px) saturate(1.25);
+  background: var(--ov-card-bg, rgba(255, 255, 255, 0.16));
+  -webkit-backdrop-filter: blur(14px) saturate(1.05);
+  backdrop-filter: blur(14px) saturate(1.05);
   border: 1px solid rgba(255, 255, 255, 0.35);
   box-shadow: var(--ov-card-shadow, 0 18px 40px -22px rgba(0, 0, 0, 0.3));
 }
 /* Browser tanpa backdrop-filter: naikkan opacity supaya teks tetap terbaca. */
 @supports not (backdrop-filter: blur(1px)) {
-  .g-card--glass { background: rgba(255, 255, 255, 0.82); }
+  .g-card--glass { background: var(--ov-card-bg, rgba(255, 255, 255, 0.82)); }
 }
 
 /* OUTLINE — garis tepi tipis, isi nyaris transparan, tanpa shadow.
-   Sama alasannya dengan glass: background TIDAK memakai --ov-card-bg,
-   supaya tetap tampil "nyaris transparan" walau warna kartu global diisi. */
+   --ov-card-bg (kalau diisi) di-mix ke transparan (65%, dinaikkan dari 55%
+   supaya warna admin lebih dominan), jadi "Warna Kartu" tetap terasa
+   sebagai tint lembut tanpa membuat outline jadi solid. */
 .g-card--outline {
-  background: color-mix(in srgb, var(--t-paper, #fff) 55%, transparent);
+  background: var(--ov-card-bg, color-mix(in srgb, var(--t-paper, #fff) 55%, transparent));
   border: 1.5px solid color-mix(in srgb, var(--t-accent, #555) 55%, transparent);
   box-shadow: none;
 }
@@ -75,13 +95,14 @@ defineProps({
    kartu global (--ov-card-bg) MEMANG relevan di sini — dipakai dari .g-card. */
 .g-card--flat { box-shadow: none; }
 
-/* GRADIENT — gradasi lembut paper -> sentuhan accent. TIDAK memakai
-   --ov-card-bg (warna solid tunggal tak bisa menampilkan gradasi apa pun). */
+/* GRADIENT — gradasi lembut warna-dasar -> sentuhan accent. Warna dasarnya
+   ikut --ov-card-bg kalau diisi (jatuh ke --t-paper kalau kosong), supaya
+   "Warna Kartu" tetap mengubah nuansa gradasinya. */
 .g-card--gradient {
   background: linear-gradient(
     165deg,
-    var(--t-paper, #fff) 0%,
-    color-mix(in srgb, var(--t-paper, #fff) 88%, var(--t-accent, #888)) 100%
+    var(--ov-card-bg, var(--t-paper, #fff)) 0%,
+    color-mix(in srgb, var(--ov-card-bg, var(--t-paper, #fff)) 88%, var(--t-accent, #888)) 100%
   );
 }
 

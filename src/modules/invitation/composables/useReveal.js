@@ -22,6 +22,22 @@ const PRESETS = {
   'none':       null,
 };
 
+/**
+ * Scroller default aktif (selector CSS), diset oleh Layout tema yang punya
+ * panel scroll sendiri (mis. Senja: '.senja-right'). BUG yang diperbaiki:
+ * v-reveal di komponen _core (LoveStorySection, CountdownSection, dst) tidak
+ * tahu scroller kustom ini -- cuma section wrapper Layout.vue yang di-set
+ * manual, jadi kartu-kartu DI DALAM section (mis. tiap kisah cinta) tetap
+ * memantau window (yang tidak pernah scroll di Senja) dan permanen
+ * tersembunyi (opacity 0) sampai di-klik (lightbox muncul terpisah, tidak
+ * lewat animasi yang macet ini). Modul-level supaya SEMUA v-reveal di mana
+ * pun otomatis ikut tanpa perlu diteruskan manual ke tiap section.
+ */
+let defaultScroller = null;
+export function setRevealScroller(selector) {
+  defaultScroller = selector;
+}
+
 async function initReveal(el, raw = {}) {
   /* Bentuk nilai yang didukung:
      - string preset                     : v-reveal="'fade-up'"
@@ -54,7 +70,7 @@ async function initReveal(el, raw = {}) {
       ease: opts.ease ?? 'power2.out',
       scrollTrigger: {
         trigger: el,
-        ...(opts.scroller ? { scroller: opts.scroller } : {}),
+        ...((opts.scroller ?? defaultScroller) ? { scroller: opts.scroller ?? defaultScroller } : {}),
         start: opts.start ?? 'top 82%',
         once: opts.once ?? true,
       },
