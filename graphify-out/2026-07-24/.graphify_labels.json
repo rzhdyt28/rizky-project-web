@@ -45,22 +45,8 @@
   "43": "GiftSection.vue",
   "44": "UcapanDoa.vue",
   "45": "useInvitationForm.js",
-  "46": "SectionElementStyleFields.vue",
-  "47": "toMapsEmbed",
-  "48": "EventSection.vue",
-  "49": "LoveStoryStyleGrid.vue",
   "50": "EventSection.vue",
   "51": "CoHostSectionFields.vue",
   "52": "invitationFormOptions.js",
-  "53": "GiftStyleStack.vue",
-  "54": "VideoSectionFields.vue",
-  "55": "useThemeOptions.js",
-  "56": "GlobalStyleSectionFields.vue",
-  "57": "HeroSectionFields.vue",
-  "58": "RsvpGuestbookSectionFields.vue",
-  "59": "EventStyleElegant.vue",
-  "60": "EventStyleMinimal.vue",
-  "61": "EventStyleTicket.vue",
-  "62": "EventStyleTimeline.vue",
-  "63": "SectionVisibilityChecklist.vue"
+  "54": "VideoSectionFields.vue"
 }
